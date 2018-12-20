@@ -95,7 +95,7 @@ module.exports = {
       chunkFilename: "[id].css"
     }),
     new Dotenv({
-      path: `./.env${env === "production" ? ".production" : ""}`,
+      path: `./.env${env === "production" ? ".prod" : ""}`,
     })
   ]
 };
