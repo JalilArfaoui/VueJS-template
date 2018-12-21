@@ -11,6 +11,8 @@ import MediaCapture from '../components/MediaCapture.vue'
 
 import Admin from '../components/Admin.vue'
 import AdminClients from '../components/AdminClients.vue'
+import AdminDetailsClient from '../components/AdminDetailsClient.vue'
+import AdminUsers from '../components/AdminUsers.vue'
 
 Vue.use(Router)
 
@@ -62,12 +64,29 @@ let router = new Router({
         requiresAuth: true,
         requiresAdminAuth: true
       }
-    }
-    ,
+    },
     {
       path: '/adminclients',
       name: 'adminclients',
       component: AdminClients,
+      meta: {
+        requiresAuth: true,
+        requiresAdminAuth: true
+      }
+    },
+    {
+      path: '/admindetailsclient',
+      name: 'admindetailsclient',
+      component: AdminDetailsClient,
+      meta: {
+        requiresAuth: true,
+        requiresAdminAuth: true
+      }
+    },
+    {
+      path: '/adminusers',
+      name: 'adminusers',
+      component: AdminUsers,
       meta: {
         requiresAuth: true,
         requiresAdminAuth: true

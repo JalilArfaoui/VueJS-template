@@ -180,6 +180,7 @@ export default {
     async getClients () {
       try {
         const clients = await AdminService.getClients()
+        console.log(clients);
         this.clients = Object.keys(clients.data).map((key) => {
           return clients.data[key]
         })
@@ -189,9 +190,8 @@ export default {
     },
 
     watchItem (item) {
-      this.editedIndex = this.users.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.dialog = true
+      this.$store.dispatch('setClient', item)
+      this.$router.push('AdminDetailsClient')
     },
 
     editItem (item) {
