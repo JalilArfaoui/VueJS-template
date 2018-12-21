@@ -6,7 +6,7 @@
       <slot>
         <v-form
         name="login-form"
-        autocomplete="true"
+        autocomplete="false"
         v-model="valid"
         ref="form">
         <v-text-field
@@ -43,8 +43,8 @@
           v-model="acceptationBox">
         </v-checkbox>
         <p v-show="activationStep">
-          Afin de vérifier votre identité, un e-mail vient de vous être envoyé avec un code. Recopiez ce code ci-dessous pour terminer votre inscription.
-        <br>Si vous ne le trouvez pas dans votre boite mail, vérifiez dans vos spams.
+          Un code vient vient de vous être envoyé à l'adresse {{this.email}}
+          <br> Recopiez ce code ci-dessous pour terminer votre inscription.
         </p>
         <v-text-field
           v-show="activationStep"
@@ -54,9 +54,14 @@
           autocomplete="false"
           v-model="hash"
           required
-          :counter="4"
+          :counter="6"
           >
         </v-text-field>
+        <p
+        v-show="activationStep"
+        ><i>
+          Si vous ne le trouvez pas dans votre boite mail, vérifiez dans vos spams.
+        </i></p>
       </v-form>
         <br>
         <v-alert
@@ -141,9 +146,14 @@ export default {
             email: this.email
           })
           if (res) {
-            EmailService.sendAuthEmail({
+            AuthenticationService.resetHash({
               to: this.email
-            }).then(
+            })
+            .then(
+              EmailService.sendAuthEmail({
+                to: this.email
+              })
+            ).then(
               this.acceptationBox = false,
               this.nameRegistered = true,
               this.stepNbr = 2,
