@@ -18,6 +18,9 @@ module.exports = {
       '@': resolve('src'),
     }
   },
+  devServer: {
+    historyApiFallback: true
+  },
   module: {
     rules: [
       {

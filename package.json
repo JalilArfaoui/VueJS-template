@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack-dev-server --mode development --open",
+    "dev": "webpack-dev-server --mode development --open --content-base src --hot --inline",
     "build": "webpack --mode production",
     "postinstall": "npm run build",
     "start": "node server.js"
@@ -42,6 +42,7 @@
     "connect-history-api-fallback": "^1.5.0",
     "dotenv-webpack": "^1.5.7",
     "express": "^4.16.4",
+    "express-history-api-fallback": "^2.2.1",
     "lodash": "^4.17.4",
     "material-design-icons-iconfont": "^4.0.3",
     "vue": "^2.5.21",

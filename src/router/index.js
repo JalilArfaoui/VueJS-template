@@ -8,7 +8,9 @@ import Welcome from '../components/Welcome.vue'
 import ResetPwd from '../components/ResetPwd.vue'
 import Dashboard from '../components/Dashboard.vue'
 import MediaCapture from '../components/MediaCapture.vue'
+
 import Admin from '../components/Admin.vue'
+import AdminClients from '../components/AdminClients.vue'
 
 Vue.use(Router)
 
@@ -56,6 +58,16 @@ let router = new Router({
       path: '/admin',
       name: 'admin',
       component: Admin,
+      meta: {
+        requiresAuth: true,
+        requiresAdminAuth: true
+      }
+    }
+    ,
+    {
+      path: '/adminclients',
+      name: 'adminclients',
+      component: AdminClients,
       meta: {
         requiresAuth: true,
         requiresAdminAuth: true

@@ -12,9 +12,19 @@ export default {
           title: 'Main Navigation'
         },
         {
-          href: '/',
+          href: '/adminclients',
           title: 'Gestion des clients',
-          icon: 'fa fa-user',
+          icon: 'fa fa-user'
+        },
+        {
+          href: '/charts',
+          title: 'Gestion des Profils coachs',
+          icon: '<v-icon small> delete </v-icon>'
+        },
+        {
+          href: '/tables',
+          title: 'Gestion des circuits',
+          icon: 'fa fa-table',
           child: [
             {
               href: '/auth/login',
@@ -27,16 +37,6 @@ export default {
               icon: 'fa fa-lock'
             }
           ]
-        },
-        {
-          href: '/charts',
-          title: 'Gestion des Profils coachs',
-          icon: '<v-icon small> delete </v-icon>'
-        },
-        {
-          href: '/tables',
-          title: 'Gestion des circuits',
-          icon: 'fa fa-table'
         }
       ],
       collapsed: true,
