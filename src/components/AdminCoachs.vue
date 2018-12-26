@@ -243,7 +243,7 @@ export default {
         try {
           const res = await AdminService.createCoach({
             firstName: this.editedItem.firstName,
-            lastName: this.editedItem.lastName
+            lastName: this.editedItem.lastName,
             email: this.editedItem.email,
             description: this.editedItem.description
           })
