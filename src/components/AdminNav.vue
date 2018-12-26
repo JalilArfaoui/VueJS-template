@@ -17,8 +17,8 @@ export default {
           icon: 'fa fa-user'
         },
         {
-          href: '/charts',
-          title: 'Gestion des Profils coachs',
+          href: '/admincoachs',
+          title: 'Gestion des Coachs',
           icon: '<v-icon small> delete </v-icon>'
         },
         {

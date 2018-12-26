@@ -33,5 +33,21 @@ export default {
   deleteUser (userId) {
     // this makes a put request to the register endpoint on the express server using the credentials passed
     return Api().delete(userId + '/user')
-  }
+  },
+  createCoach (credentials) {
+    // this makes a post request to the register endpoint on the express server using the credentials passed
+    return Api().post('createCoach', credentials)
+  },
+  getCoachs (credentials) {
+    // this makes a get request to the register endpoint on the express server using the credentials passed
+    return Api().get('getCoachs', credentials)
+  },
+  editCoach (credentials) {
+    // this makes a put request to the register endpoint on the express server using the credentials passed
+    return Api().put('editCoach', credentials)
+  },
+  deleteCoach (coachId) {
+    // this makes a put request to the register endpoint on the express server using the credentials passed
+    return Api().delete(coachId + '/coach')
+  },
 }

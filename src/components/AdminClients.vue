@@ -69,7 +69,7 @@
     class="elevation-1"
     >
     <template slot="items" slot-scope="props">
-      <td>{{ props.index }}</td>
+      <td>{{ props.index + 1 }}</td>
       <td>{{ props.item.name }}</td>
       <td>{{ props.item.nbUsers }}</td>
       <td>{{ props.item.type }}</td>

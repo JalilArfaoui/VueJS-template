@@ -3,7 +3,7 @@
   <AdminNav />
   <v-layout id="admin-layout" justify-space-around column>
     <v-toolbar flat color="white">
-        <v-toolbar-title>Utilisateurs {{ company }}</v-toolbar-title>
+        <v-toolbar-title>Liste des clients</v-toolbar-title>
         <v-divider
           class="mx-2"
           inset
@@ -11,10 +11,10 @@
         ></v-divider>
         <v-spacer></v-spacer>
     <v-dialog v-model="dialog" max-width="500px">
-      <v-btn slot="activator" color="primary" dark class="mb-2">Nouvel utilisateur</v-btn>
+      <v-btn slot="activator" color="primary" dark class="mb-2">Ajouter un client</v-btn>
       <v-card>
         <v-card-title>
-          <span class="headline">{{ company }}</span>
+          <span class="headline">{{ formTitle }}</span>
         </v-card-title>
 
         <v-card-text>
@@ -22,14 +22,22 @@
             <v-layout wrap>
               <v-flex xs12 sm10>
                 <v-text-field
-                  v-model="editedItem.email"
-                  label="E-mail">
+                  v-if=""
+                  v-model="editedItem.name"
+                  label="Nom">
                 </v-text-field>
-                <v-text-field
-                  v-if="this.editedIndex != -1"
-                  v-model="editedItem.coach"
-                  label="Coach">
-                </v-text-field>
+                <!-- <v-text-field v-if="this.editedIndex != -1" v-model="editedItem.capacity" label="Qualité"></v-text-field> -->
+                <v-select
+                  v-if=""
+                  v-model="editedItem.type"
+                  :items="types"
+                  item-text="state"
+                  item-value="abbr"
+                  label="Type de client"
+                  persistent-hint
+                  return-object
+                  single-line
+                ></v-select>
               </v-flex>
             </v-layout>
           </v-container>
@@ -45,10 +53,11 @@
             {{dialogError}}
           </v-alert>
         </v-card-text>
+
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click="close">Cancel</v-btn>
-          <v-btn color="blue darken-1" flat @click="save">Save</v-btn>
+          <v-btn color="blue darken-1" flat @click="close">Annuler</v-btn>
+          <v-btn color="blue darken-1" flat @click="save">Valider</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -56,17 +65,22 @@
 
     <v-data-table
     :headers="headers"
-    :items="users"
+    :items="coachs"
     class="elevation-1"
     >
     <template slot="items" slot-scope="props">
-      <td>{{ props.item.name }}</td>
+      <td>{{ props.index + 1 }}</td>
+      <td>{{ props.item.firstName }}</td>
+      <td>{{ props.item.lastName }}</td>
       <td>{{ props.item.email }}</td>
-      <td>{{ props.item.importedAt }}</td>
-      <td>{{ props.item.coach }}</td>
-      <td>{{ props.item.capacity }}</td>
-      <td>{{ props.item.state }}</td>
       <td class="layout align-center justify-space-around">
+        <!-- <v-icon
+          small
+          class="mr-2"
+          @click="watchItem(props.item.name)"
+          >
+          remove_red_eye
+        </v-icon> -->
         <v-icon
           small
           class="mr-2"
@@ -114,54 +128,33 @@ export default {
   data () {
     return {
       name: this.$store.state.user.name,
-      company: this.$store.state.client,
       dialog: false,
       error: '',
       dialogError: '',
-      users: [],
+      coachs: [],
       headers: [
-        {
-          text: 'Prénom',
-          align: 'left',
-          sortable: false,
-          value: 'name'
-        },
-        { text: 'Email', value: 'email' },
-        // { text: 'Client', value: 'company' },
-        { text: 'Importé le', value: 'importedAt' },
-        { text: 'Coach', value: 'coach' },
-        { text: 'Qualité', value: 'capacity' },
-        { text: 'Activation', value: 'state' },
+        { text: '#', value: 'index' },
+        { text: 'Prénom', value: 'firstName' },
+        { text: 'Nom', value: 'lastName' },
+        { text: 'E-mail', value: 'email' },
         { text: 'Actions', value: 'name', sortable: false }
       ],
       editedIndex: -1,
       editedItem: {
-        name: '',
-        company: '',
-        email: '',
-        capacity: '',
-        importedAt: null,
-        coach: '',
-        state: ''
+        firstName: '',
+        lastName: '',
+        email: ''
       },
       defaultItem: {
-        name: '',
-        company: this.$store.state.client,
-        email: '',
-        capacity: 'user',
-        importedAt: null,
-        coach: '',
-        state: 'newUser'
-      },
-      capacities: [
-        'user',
-        'admin'
-      ]
+        firstName: '',
+        lastName: '',
+        email: ''
+      }
     }
   },
   computed: {
     formTitle () {
-      return this.editedIndex === -1 ? 'Nouvel utilisateur' : 'Modifier l\'utilisateur'
+      return this.editedIndex === -1 ? 'Nouveau coach' : 'Modifier le coach'
     }
   },
   watch: {
@@ -170,7 +163,7 @@ export default {
     }
   },
   created () {
-    this.getUsers()
+    this.getCoachs()
   },
   mounted () {
     if (localStorage.name) {
@@ -181,32 +174,38 @@ export default {
     }
   },
   methods: {
-    async getUsers () {
+    async getCoachs () {
       try {
-        const users = await AdminService.getUsers(this.company)
-        this.users = Object.keys(users.data).map((key) => {
-          return users.data[key]
+        const coachs = await AdminService.getCoachs()
+        console.log(coachs);
+        this.coachs = Object.keys(coachs.data).map((key) => {
+          return coachs.data[key]
         })
       } catch (e) {
         this.error = e.response.data.error
       }
     },
 
+    // watchItem (item) {
+    //   this.$store.dispatch('setClient', item)
+    //   this.$router.push('AdminDetailsClient')
+    // },
+
     editItem (item) {
-      this.editedIndex = this.users.indexOf(item)
+      this.editedIndex = this.clients.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
 
     async deleteItem (item) {
-      const index = this.users.indexOf(item)
+      const index = this.clients.indexOf(item)
       this.editedItem = Object.assign({}, item)
-      var conf = confirm('Êtes vous sûr de vouloir supprimer cet utilisateur ?')
+      var conf = confirm('Êtes vous sûr de vouloir supprimer ce client ?')
       if (conf) {
         try {
-          const deleted = await AdminService.deleteUser(this.editedItem._id)
+          const deleted = await AdminService.deleteCoach(this.editedItem._id)
           if (deleted) {
-            this.users.splice(index, 1)
+            this.clients.splice(index, 1)
           }
         } catch (e) {
           this.error = e.response.data.error
@@ -225,35 +224,37 @@ export default {
     async save () {
       if (this.editedIndex > -1) {
         try {
-          const edited = await AdminService.editUser(this.editedItem)
-          console.log(edited);
+          const edited = await AdminService.editCoach({
+            _id: this.editedItem._id,
+            firstName: this.editedItem.firstName,
+            lastName: this.editedItem.lastName,
+            email: this.editedItem.email
+          })
           if (edited) {
-            Object.assign(this.users[this.editedIndex], this.editedItem)
+            Object.assign(this.clients[this.editedIndex], this.editedItem)
             this.close()
           } else {
             this.dialogError = 'Modification non prise en compte'
           }
         } catch (e) {
-          this.dialogError = e.response.data.error
+          this.dialogError = 'Modification non prise en compte. Il est possible que ce nom existe déjà'
         }
       } else {
         try {
-          const res = await AdminService.register({
+          const res = await AdminService.createCoach({
+            firstName: this.editedItem.firstName,
+            lastName: this.editedItem.lastName
             email: this.editedItem.email,
-            company: this.company
+            description: this.editedItem.description
           })
-          if (res.data.user.email) {
-            console.log(res.data.user)
-            this.editedItem = res.data.user
-            console.log(this.editedItem)
-
-            this.users.push(this.editedItem)
+          if (res.data.coach.name) {
+            this.coachs.push(this.editedItem)
             this.close()
           } else {
             this.dialogError = 'Modification non prise en compte'
           }
         } catch (error) {
-          this.dialogError = error.response.data.error
+          this.dialogError = 'Impossible de rajouter ce client. Il est possible qu\'il existe déjà ou que vous n\'avez pas sélectionné un type de client'
         }
       }
     }

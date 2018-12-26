@@ -13,6 +13,7 @@ import Admin from '../components/Admin.vue'
 import AdminClients from '../components/AdminClients.vue'
 import AdminDetailsClient from '../components/AdminDetailsClient.vue'
 import AdminUsers from '../components/AdminUsers.vue'
+import AdminCoachs from '../components/AdminCoachs.vue'
 
 Vue.use(Router)
 
@@ -87,6 +88,15 @@ let router = new Router({
       path: '/adminusers',
       name: 'adminusers',
       component: AdminUsers,
+      meta: {
+        requiresAuth: true,
+        requiresAdminAuth: true
+      }
+    },
+    {
+      path: '/admincoachs',
+      name: 'admincoachs',
+      component: AdminCoachs,
       meta: {
         requiresAuth: true,
         requiresAdminAuth: true
