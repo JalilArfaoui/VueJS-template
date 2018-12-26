@@ -2,7 +2,7 @@ const express = require('express');
 const path = require('path');
 const serveStatic = require('serve-static');
 // var history = require('connect-history-api-fallback');
-import fallback from 'express-history-api-fallback'
+const fallback = require ('express-history-api-fallback');
 
 let app = express();
 const root = `${__dirname}/dist`
