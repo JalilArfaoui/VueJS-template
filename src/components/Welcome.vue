@@ -1,7 +1,7 @@
 <template>
   <v-layout justify-center>
     <v-flex xs6>
-      <h1>Bienvenue {{name | email}}</h1>
+      <h1>Bienvenue {{name || email}}</h1>
       <panel :title="'Étape ' + stepNbr + '/4 - ' + stepDesc">
       <slot>
         <v-form

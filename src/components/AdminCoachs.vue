@@ -3,7 +3,7 @@
   <AdminNav />
   <v-layout id="admin-layout" justify-space-around column>
     <v-toolbar flat color="white">
-        <v-toolbar-title>Liste des clients</v-toolbar-title>
+        <v-toolbar-title>Liste des coachs</v-toolbar-title>
         <v-divider
           class="mx-2"
           inset
@@ -11,7 +11,7 @@
         ></v-divider>
         <v-spacer></v-spacer>
     <v-dialog v-model="dialog" max-width="500px">
-      <v-btn slot="activator" color="primary" dark class="mb-2">Ajouter un client</v-btn>
+      <v-btn slot="activator" color="primary" dark class="mb-2">Ajouter un coach</v-btn>
       <v-card>
         <v-card-title>
           <span class="headline">{{ formTitle }}</span>
@@ -23,21 +23,24 @@
               <v-flex xs12 sm10>
                 <v-text-field
                   v-if=""
-                  v-model="editedItem.name"
+                  v-model="editedItem.firstName"
+                  label="Prénom">
+                </v-text-field>
+                <v-text-field
+                  v-if=""
+                  v-model="editedItem.lastName"
                   label="Nom">
                 </v-text-field>
-                <!-- <v-text-field v-if="this.editedIndex != -1" v-model="editedItem.capacity" label="Qualité"></v-text-field> -->
-                <v-select
+                <v-text-field
                   v-if=""
-                  v-model="editedItem.type"
-                  :items="types"
-                  item-text="state"
-                  item-value="abbr"
-                  label="Type de client"
-                  persistent-hint
-                  return-object
-                  single-line
-                ></v-select>
+                  v-model="editedItem.email"
+                  label="E-mail">
+                </v-text-field>
+                <v-text-field
+                  v-if=""
+                  v-model="editedItem.description"
+                  label="Description">
+                </v-text-field>
               </v-flex>
             </v-layout>
           </v-container>
@@ -73,6 +76,7 @@
       <td>{{ props.item.firstName }}</td>
       <td>{{ props.item.lastName }}</td>
       <td>{{ props.item.email }}</td>
+      <td>{{ props.item.description }}</td>
       <td class="layout align-center justify-space-around">
         <!-- <v-icon
           small
@@ -137,6 +141,7 @@ export default {
         { text: 'Prénom', value: 'firstName' },
         { text: 'Nom', value: 'lastName' },
         { text: 'E-mail', value: 'email' },
+        { text: 'Description', value: 'description' },
         { text: 'Actions', value: 'name', sortable: false }
       ],
       editedIndex: -1,
@@ -186,26 +191,21 @@ export default {
       }
     },
 
-    // watchItem (item) {
-    //   this.$store.dispatch('setClient', item)
-    //   this.$router.push('AdminDetailsClient')
-    // },
-
     editItem (item) {
-      this.editedIndex = this.clients.indexOf(item)
+      this.editedIndex = this.coachs.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
 
     async deleteItem (item) {
-      const index = this.clients.indexOf(item)
+      const index = this.coachs.indexOf(item)
       this.editedItem = Object.assign({}, item)
-      var conf = confirm('Êtes vous sûr de vouloir supprimer ce client ?')
+      var conf = confirm('Êtes vous sûr de vouloir supprimer ce coach ?')
       if (conf) {
         try {
           const deleted = await AdminService.deleteCoach(this.editedItem._id)
           if (deleted) {
-            this.clients.splice(index, 1)
+            this.coachs.splice(index, 1)
           }
         } catch (e) {
           this.error = e.response.data.error
@@ -228,10 +228,11 @@ export default {
             _id: this.editedItem._id,
             firstName: this.editedItem.firstName,
             lastName: this.editedItem.lastName,
-            email: this.editedItem.email
+            email: this.editedItem.email,
+            description: this.editedItem.description
           })
           if (edited) {
-            Object.assign(this.clients[this.editedIndex], this.editedItem)
+            Object.assign(this.coachs[this.editedIndex], this.editedItem)
             this.close()
           } else {
             this.dialogError = 'Modification non prise en compte'
@@ -247,14 +248,14 @@ export default {
             email: this.editedItem.email,
             description: this.editedItem.description
           })
-          if (res.data.coach.name) {
+          if (res.data.coach.email) {
             this.coachs.push(this.editedItem)
             this.close()
           } else {
             this.dialogError = 'Modification non prise en compte'
           }
         } catch (error) {
-          this.dialogError = 'Impossible de rajouter ce client. Il est possible qu\'il existe déjà ou que vous n\'avez pas sélectionné un type de client'
+          this.dialogError = 'Impossible de rajouter ce coach. Il est possible qu\'il existe déjà ou que vous n\'avez pas sélectionné un type de coach'
         }
       }
     }

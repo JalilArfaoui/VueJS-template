@@ -49,5 +49,5 @@ export default {
   deleteCoach (coachId) {
     // this makes a put request to the register endpoint on the express server using the credentials passed
     return Api().delete(coachId + '/coach')
-  },
+  }
 }

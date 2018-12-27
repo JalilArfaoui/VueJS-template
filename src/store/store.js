@@ -32,16 +32,16 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    setToken ({commit}, token) {
+    setToken ({ commit }, token) {
       commit('setToken', token)
     },
-    setUser ({commit}, user) {
+    setUser ({ commit }, user) {
       commit('setUser', user)
     },
-    setClient ({commit}, client) {
+    setClient ({ commit }, client) {
       commit('setClient', client)
     },
-    setAdmin ({commit}, user) {
+    setAdmin ({ commit }, user) {
       commit('setAdmin', user)
     }
   },

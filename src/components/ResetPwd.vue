@@ -1,7 +1,7 @@
 <template>
   <v-layout justify-center>
     <v-flex xs6>
-      <h1>Bonjour {{name | email}}</h1>
+      <h1>Bonjour {{name || email}}</h1>
       <panel :title="'Vérification de l\'identité'">
       <slot>
         <v-form

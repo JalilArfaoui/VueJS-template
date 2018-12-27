@@ -6,7 +6,7 @@ export default () => {
   return axios.create({
     baseURL: process.env.VUE_APP_SERVER_PORT,
     timeout: 3000,
-    headers: {'x-auth': token}
+    headers: { 'x-auth': token }
   })
 }
 
