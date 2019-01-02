@@ -3,14 +3,16 @@
   <AdminNav />
   <v-layout id="admin-layout" justify-space-around column>
     <v-toolbar flat color="white">
-        <v-toolbar-title>This page is the admin dashboard</v-toolbar-title>
-        <v-divider
-          class="mx-2"
-          inset
-          vertical
-        ></v-divider>
-        <v-spacer></v-spacer>
-    <v-dialog v-model="dialog" max-width="500px">
+      <v-toolbar-title>This page is the admin dashboard</v-toolbar-title>
+      <v-divider
+        class="mx-2"
+        inset
+        vertical
+      ></v-divider>
+      <v-spacer></v-spacer>
+    </v-toolbar>
+
+    <!-- <v-dialog v-model="dialog" max-width="500px">
       <v-btn slot="activator" color="primary" dark class="mb-2">Nouvel utilisateur</v-btn>
       <v-card>
         <v-card-title>
@@ -22,7 +24,6 @@
             <v-layout wrap>
               <v-flex xs12 sm10>
                 <v-text-field v-if="this.editedIndex == -1" v-model="editedItem.email" label="E-mail"></v-text-field>
-                <!-- <v-text-field v-if="this.editedIndex != -1" v-model="editedItem.capacity" label="Qualité"></v-text-field> -->
                 <v-select
                   v-if="this.editedIndex != -1"
                   v-model="editedItem.capacity"
@@ -96,7 +97,7 @@
     outline
     >
     {{error}}
-  </v-alert>
+  </v-alert> -->
 </v-layout>
 </div>
 </template>

@@ -32,6 +32,7 @@
 export default {
   methods: {
     logout () {
+      this.$store.dispatch('setClient', null)
       this.$store.dispatch('setToken', null)
       this.$store.dispatch('setAdmin', null)
       this.$store.dispatch('setUser', null)

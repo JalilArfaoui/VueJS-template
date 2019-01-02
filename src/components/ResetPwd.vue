@@ -14,6 +14,7 @@
         </p>
         <v-text-field
           v-show="!auth"
+          autocomplete="false"
           label="Renseigner le code envoyé par mail"
           type="string"
           name="authentication"
@@ -131,7 +132,7 @@ export default {
       if (!result.error) {
         this.acceptationBox = true
       }
-      console.log(this.acceptationBox)
+      // console.log(this.acceptationBox)
     },
     async resetPwd () {
       try {

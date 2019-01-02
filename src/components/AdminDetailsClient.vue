@@ -25,11 +25,21 @@
                   v-model="editedItem.email"
                   label="E-mail">
                 </v-text-field>
-                <v-text-field
+                <!-- <v-text-field
                   v-if="this.editedIndex != -1"
                   v-model="editedItem.coach"
                   label="Coach">
-                </v-text-field>
+                </v-text-field> -->
+                <v-select
+                  v-if="this.editedIndex != -1"
+                  v-model="editedItem.coach"
+                  :items="coachs"
+                  item-text="lastName"
+                  label="Coach"
+                  persistent-hint
+                  return-object
+                  single-line
+                ></v-select>
               </v-flex>
             </v-layout>
           </v-container>
@@ -63,7 +73,7 @@
       <td>{{ props.item.name }}</td>
       <td>{{ props.item.email }}</td>
       <td>{{ props.item.importedAt }}</td>
-      <td>{{ props.item.coach }}</td>
+      <td>{{ props.item.coach.lastName }}</td>
       <td>{{ props.item.capacity }}</td>
       <td>{{ props.item.state }}</td>
       <td class="layout align-center justify-space-around">
@@ -119,6 +129,7 @@ export default {
       error: '',
       dialogError: '',
       users: [],
+      coachs: [],
       headers: [
         {
           text: 'Prénom',
@@ -171,6 +182,7 @@ export default {
   },
   created () {
     this.getUsers()
+    this.getCoachs()
   },
   mounted () {
     if (localStorage.name) {
@@ -187,6 +199,19 @@ export default {
         this.users = Object.keys(users.data).map((key) => {
           return users.data[key]
         })
+      } catch (e) {
+        this.error = e.response.data.error
+      }
+    },
+    async getCoachs () {
+      try {
+        const coachs = await AdminService.getCoachs()
+        console.log(coachs)
+        this.coachs = Object.keys(coachs.data).map((key) => {
+          console.log(coachs.data)
+          return coachs.data[key]
+        })
+        console.log(this.coachs.firstName)
       } catch (e) {
         this.error = e.response.data.error
       }

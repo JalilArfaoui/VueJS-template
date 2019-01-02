@@ -180,7 +180,6 @@ export default {
     async getClients () {
       try {
         const clients = await AdminService.getClients()
-        console.log(clients);
         this.clients = Object.keys(clients.data).map((key) => {
           return clients.data[key]
         })

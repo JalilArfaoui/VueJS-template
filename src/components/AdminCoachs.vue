@@ -41,6 +41,21 @@
                   v-model="editedItem.description"
                   label="Description">
                 </v-text-field>
+                <image-input v-model="editedItem.avatar">
+                  <div slot="activator">
+                    <v-avatar size="150px" v-ripple v-if="!editedItem.avatar" class="grey lighten-3 mb-3">
+                      <span>Click to add avatar</span>
+                    </v-avatar>
+                    <v-avatar size="150px" v-ripple v-else class="mb-3">
+                      <img :src="editedItem.avatar.imageURL" alt="avatar">
+                    </v-avatar>
+                  </div>
+                </image-input>
+                <!-- <v-slide-x-transition>
+                  <div v-if="avatar && saved == false">
+                    <v-btn class="primary" @click="uploadImage" :loading="saving">Save Avatar</v-btn>
+                  </div>
+                </v-slide-x-transition> -->
               </v-flex>
             </v-layout>
           </v-container>
@@ -73,6 +88,7 @@
     >
     <template slot="items" slot-scope="props">
       <td>{{ props.index + 1 }}</td>
+      <td><img :src="props.item.profilPicture" alt="profilPicture"></td>
       <td>{{ props.item.firstName }}</td>
       <td>{{ props.item.lastName }}</td>
       <td>{{ props.item.email }}</td>
@@ -123,6 +139,7 @@ import AdminNav from './AdminNav'
 // import { SidebarMenu } from 'vue-sidebar-menu' // left Admin menu
 import AdminService from '../services/AdminService'
 // import { required, minLength, maxLength } from 'vuelidate/lib/validators'
+import imageUpload from './imageUpload.vue'
 
 export default {
   components: {
@@ -138,6 +155,7 @@ export default {
       coachs: [],
       headers: [
         { text: '#', value: 'index' },
+        { text: 'Profil', value: 'profilPicture' },
         { text: 'Prénom', value: 'firstName' },
         { text: 'Nom', value: 'lastName' },
         { text: 'E-mail', value: 'email' },
@@ -148,14 +166,23 @@ export default {
       editedItem: {
         firstName: '',
         lastName: '',
-        email: ''
+        email: '',
+        description: '',
+        avatar: null
       },
       defaultItem: {
         firstName: '',
         lastName: '',
-        email: ''
-      }
+        email: '',
+        description: '',
+        avatar: null
+      },
+      saving: false,
+      saved: false
     }
+  },
+  components: {
+    ImageInput: imageUpload
   },
   computed: {
     formTitle () {
@@ -165,6 +192,12 @@ export default {
   watch: {
     dialog (val) {
       val || this.close()
+    },
+    avatar: {
+     handler: function() {
+       this.saved = false
+     },
+     deep: true
     }
   },
   created () {
@@ -182,7 +215,6 @@ export default {
     async getCoachs () {
       try {
         const coachs = await AdminService.getCoachs()
-        console.log(coachs);
         this.coachs = Object.keys(coachs.data).map((key) => {
           return coachs.data[key]
         })
@@ -222,14 +254,16 @@ export default {
     },
 
     async save () {
-      if (this.editedIndex > -1) {
+      this.uploadImage()
+      if (this.editedIndex > -1) { // Edit coach case
         try {
           const edited = await AdminService.editCoach({
             _id: this.editedItem._id,
             firstName: this.editedItem.firstName,
             lastName: this.editedItem.lastName,
             email: this.editedItem.email,
-            description: this.editedItem.description
+            description: this.editedItem.description,
+            profilPicture: this.editedItem.avatar.imageURL
           })
           if (edited) {
             Object.assign(this.coachs[this.editedIndex], this.editedItem)
@@ -240,13 +274,14 @@ export default {
         } catch (e) {
           this.dialogError = 'Modification non prise en compte. Il est possible que ce nom existe déjà'
         }
-      } else {
+      } else { // New coach case
         try {
           const res = await AdminService.createCoach({
             firstName: this.editedItem.firstName,
             lastName: this.editedItem.lastName,
             email: this.editedItem.email,
-            description: this.editedItem.description
+            description: this.editedItem.description,
+            profilPicture: this.editedItem.avatar.imageURL
           })
           if (res.data.coach.email) {
             this.coachs.push(this.editedItem)
@@ -255,9 +290,17 @@ export default {
             this.dialogError = 'Modification non prise en compte'
           }
         } catch (error) {
-          this.dialogError = 'Impossible de rajouter ce coach. Il est possible qu\'il existe déjà ou que vous n\'avez pas sélectionné un type de coach'
+          this.dialogError = 'Impossible de rajouter ce coach. Il est probable qu\'il existe déjà.'
         }
       }
+    },
+    uploadImage() {
+      this.saving = true
+      setTimeout(() => this.savedAvatar(), 1000)
+    },
+    savedAvatar() {
+      this.saving = false
+      this.saved = true
     }
   }
 }
@@ -269,5 +312,10 @@ export default {
 }
 .v-sidebar-menu.collapsed ~ #admin-layout{
   padding-left: calc(50px + 1%);
+}
+.profilPicture{
+  border-radius: 30px;
+  height: 30px;
+  width: 30px;
 }
 </style>
