@@ -8,6 +8,11 @@
     </v-toolbar-title>
     <v-spacer></v-spacer>
     <v-toolbar-items class="">
+      <v-btn flat v-if="$store.state.isUserAdmin">
+        <router-link to="admin">
+          Admin
+        </router-link>
+      </v-btn>
       <v-btn flat >
         <router-link to="mediacapture">
           Vidéo

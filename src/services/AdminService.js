@@ -49,5 +49,13 @@ export default {
   deleteCoach (coachId) {
     // this makes a put request to the register endpoint on the express server using the credentials passed
     return Api().delete(coachId + '/coach')
+  },
+  avatarUpload (credentials) {
+    // this makes a post request to the register endpoint on the express server using the credentials passed
+    return Api().post('avatarUpload', credentials, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
   }
 }

@@ -36,26 +36,24 @@
                   v-model="editedItem.email"
                   label="E-mail">
                 </v-text-field>
-                <v-text-field
+                <v-textarea
                   v-if=""
                   v-model="editedItem.description"
-                  label="Description">
-                </v-text-field>
+                  label="Description"
+                  counter="500"
+                  flat
+                  multi-line>
+                </v-textarea>
                 <image-input v-model="editedItem.avatar">
                   <div slot="activator">
                     <v-avatar size="150px" v-ripple v-if="!editedItem.avatar" class="grey lighten-3 mb-3">
-                      <span>Click to add avatar</span>
+                      <span>Photo de profil</span>
                     </v-avatar>
                     <v-avatar size="150px" v-ripple v-else class="mb-3">
                       <img :src="editedItem.avatar.imageURL" alt="avatar">
                     </v-avatar>
                   </div>
                 </image-input>
-                <!-- <v-slide-x-transition>
-                  <div v-if="avatar && saved == false">
-                    <v-btn class="primary" @click="uploadImage" :loading="saving">Save Avatar</v-btn>
-                  </div>
-                </v-slide-x-transition> -->
               </v-flex>
             </v-layout>
           </v-container>
@@ -75,7 +73,13 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue darken-1" flat @click="close">Annuler</v-btn>
-          <v-btn color="blue darken-1" flat @click="save">Valider</v-btn>
+          <v-btn color="blue darken-1" flat :loading="saving" @click="save">Valider</v-btn>
+          <!-- <v-btn color="blue darken-1" flat @click="save">Valider</v-btn> -->
+          <!-- <v-slide-x-transition>
+            <div v-if="avatar && saved == false">
+              <v-btn class="primary" @click="save" :loading="saving">Save Avatar</v-btn>
+            </div>
+          </v-slide-x-transition> -->
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -88,7 +92,7 @@
     >
     <template slot="items" slot-scope="props">
       <td>{{ props.index + 1 }}</td>
-      <td><img :src="props.item.profilPicture" alt="profilPicture"></td>
+      <td><img :src="props.item.profilPicture" class="profilPicture"></td>
       <td>{{ props.item.firstName }}</td>
       <td>{{ props.item.lastName }}</td>
       <td>{{ props.item.email }}</td>
@@ -168,15 +172,16 @@ export default {
         lastName: '',
         email: '',
         description: '',
-        avatar: null
+        profilPicture: null
       },
       defaultItem: {
         firstName: '',
         lastName: '',
         email: '',
         description: '',
-        avatar: null
+        profilPicture: null
       },
+      avatarUrl: null,
       saving: false,
       saved: false
     }
@@ -254,7 +259,7 @@ export default {
     },
 
     async save () {
-      this.uploadImage()
+      this.avatarUrl = await this.uploadImage()
       if (this.editedIndex > -1) { // Edit coach case
         try {
           const edited = await AdminService.editCoach({
@@ -263,9 +268,10 @@ export default {
             lastName: this.editedItem.lastName,
             email: this.editedItem.email,
             description: this.editedItem.description,
-            profilPicture: this.editedItem.avatar.imageURL
+            profilPicture: this.avatarUrl
           })
           if (edited) {
+            this.editedItem.profilPicture = this.avatarUrl
             Object.assign(this.coachs[this.editedIndex], this.editedItem)
             this.close()
           } else {
@@ -281,22 +287,30 @@ export default {
             lastName: this.editedItem.lastName,
             email: this.editedItem.email,
             description: this.editedItem.description,
-            profilPicture: this.editedItem.avatar.imageURL
+            profilPicture: this.avatarUrl
           })
           if (res.data.coach.email) {
+            this.editedItem.profilPicture = this.avatarUrl
             this.coachs.push(this.editedItem)
             this.close()
           } else {
             this.dialogError = 'Modification non prise en compte'
           }
         } catch (error) {
-          this.dialogError = 'Impossible de rajouter ce coach. Il est probable qu\'il existe déjà.'
+          this.dialogError = error.response.data.errors
+          // this.dialogError = 'Impossible de rajouter ce coach. Vérifier que vous avez rempli les champs Prénom, Nom et E-mail. Si c\'est le cas, il est probable qu\'il existe déjà.'
         }
       }
     },
-    uploadImage() {
+    async uploadImage() {
       this.saving = true
-      setTimeout(() => this.savedAvatar(), 1000)
+      try {
+        const avatarUrl = await AdminService.avatarUpload(this.editedItem.avatar.formData)
+        this.savedAvatar()
+        return avatarUrl.data.imageUrl
+      } catch (error) {
+        this.dialogError = error.response.data.errors
+      }
     },
     savedAvatar() {
       this.saving = false
@@ -317,5 +331,8 @@ export default {
   border-radius: 30px;
   height: 30px;
   width: 30px;
+}
+td{
+  white-space: pre;
 }
 </style>

@@ -13,7 +13,7 @@
           $event.target.name, $event.target.files)"
        style="display:none">
     <!-- error dialog displays any potential errors -->
-    <v-dialog v-model="errorDialog" max-width="300">
+    <!-- <v-dialog v-model="errorDialog" max-width="300">
       <v-card>
         <v-card-text class="subheading">{{errorText}}</v-card-text>
         <v-card-actions>
@@ -21,7 +21,7 @@
           <v-btn @click="errorDialog = false" flat>Got it!</v-btn>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-dialog> -->
   </div>
 </template>
 
@@ -61,7 +61,8 @@
             // Append file into FormData & turn file into image URL
             let formData = new FormData()
             let imageURL = URL.createObjectURL(imageFile)
-            formData.append(fieldName, imageFile)
+            // formData.append(fieldName, imageFile)
+            formData.append('image', imageFile)
             // Emit FormData & image URL to the parent component
             this.$emit('input', { formData, imageURL })
           }

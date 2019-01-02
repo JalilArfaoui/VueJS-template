@@ -139,7 +139,7 @@ export default {
   },
   created: function () {
     this.email = this.$store.state.user
-    this.debouncedGetAnswer = _.debounce(this.isUser, 800)
+    this.debouncedGetAnswer = _.debounce(this.isUser, 400)
   },
   mounted () {
     console.log(process.env.VUE_APP_SERVER_PORT)
