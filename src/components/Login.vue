@@ -24,7 +24,7 @@
       <slot>
         <v-form
         name="login-form"
-        autocomplete="true"
+        autocomplete="false"
         v-model="valid"
         ref="form"
         v-on:keyup.enter="submit"
