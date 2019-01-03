@@ -31,15 +31,20 @@
                   label="Coach">
                 </v-text-field> -->
                 <v-select
-                  v-if="this.editedIndex != -1"
-                  v-model="editedItem.coach"
+                  v-model="editedItem._coach"
                   :items="coachs"
-                  item-text="lastName"
+                  item-value="_id"
                   label="Coach"
                   persistent-hint
-                  return-object
                   single-line
-                ></v-select>
+                >
+                  <template slot="selection" slot-scope="data">
+                    {{ data.item.firstName }} {{ data.item.lastName }}
+                  </template>
+                  <template slot="item" slot-scope="data">
+                    {{ data.item.firstName }} {{ data.item.lastName }}
+                  </template>
+                </v-select>
               </v-flex>
             </v-layout>
           </v-container>
@@ -77,7 +82,8 @@
       <td>{{ props.item.name }}</td>
       <td>{{ props.item.email }}</td>
       <td>{{ props.item.importedAt }}</td>
-      <td>{{ props.item.coach.lastName }}</td>
+      <td>{{ props.item.coachFirstName }} {{ props.item.coachLastName }}</td>
+      <!-- <td>{{ props.item.coach }}</td> -->
       <!-- <td>{{ props.item.capacity }}</td> -->
       <td>{{ props.item.state }}</td>
       <td class="layout align-center justify-space-around">
@@ -159,7 +165,7 @@ export default {
         email: '',
         // capacity: '',
         importedAt: null,
-        coach: '',
+        _coach: '',
         state: ''
       },
       defaultItem: {
@@ -168,7 +174,7 @@ export default {
         email: '',
         // capacity: 'user',
         importedAt: null,
-        coach: '',
+        _coach: '',
         state: 'Invité'
       },
       capacities: [
@@ -188,8 +194,8 @@ export default {
     }
   },
   created () {
-    this.getUsers()
     this.getCoachs()
+    this.getUsers()
   },
   mounted () {
     if (localStorage.name) {
@@ -207,7 +213,11 @@ export default {
           return users.data[key]
         })
         this.users.forEach( user => user.importedAt = new Date(user.importedAt).toLocaleDateString("fr-FR"))
-
+        this.users.forEach( user => {
+          var coachIndex = this.coachs.findIndex(x => x._id === user._coach)
+          user.coachFirstName = this.coachs[coachIndex].firstName,
+          user.coachLastName = this.coachs[coachIndex].lastName
+        })
       } catch (e) {
         this.error = e.response.data.error
       }
@@ -255,11 +265,13 @@ export default {
     },
 
     async save () {
-      if (this.editedIndex > -1) {
+      if (this.editedIndex > -1) { // Edit case
         try {
           const edited = await AdminService.editUser(this.editedItem)
-          console.log(edited);
           if (edited) {
+            var coachIndex = this.coachs.findIndex(x => x._id === this.editedItem._coach)
+            this.editedItem.coachFirstName = this.coachs[coachIndex].firstName
+            this.editedItem.coachLastName = this.coachs[coachIndex].lastName
             Object.assign(this.users[this.editedIndex], this.editedItem)
             this.close()
           } else {
@@ -272,11 +284,16 @@ export default {
         try {
           const res = await AdminService.register({
             email: this.editedItem.email,
-            company: this.company
+            company: this.company,
+            _coach: this.editedItem._coach
           })
           if (res.data.user.email) {
             this.editedItem = res.data.user
             this.editedItem.importedAt = new Date(this.editedItem.importedAt).toLocaleDateString("fr-FR")
+
+            var coachIndex = this.coachs.findIndex(x => x._id === this.editedItem._coach)
+            this.editedItem.coachFirstName = this.coachs[coachIndex].firstName
+            this.editedItem.coachLastName = this.coachs[coachIndex].lastName
 
             this.users.push(this.editedItem)
             this.close()

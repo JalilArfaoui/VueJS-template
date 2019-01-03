@@ -22,11 +22,11 @@
                   <v-flex xs12 sm10>
                     <image-input v-model="editedItem.avatar">
                       <div slot="imageUpload" class="text-md-center">
-                        <v-avatar size="150px" v-ripple v-if="!editedItem.avatar" class="grey lighten-3 mb-3 btn">
-                          <span>Photo de profil</span>
+                        <v-avatar size="150px" v-ripple v-if="!editedItem.profilPicture" class="grey lighten-3 mb-3 btn">
+                          <span>Insérer une photo carré inférieure à 1MB</span>
                         </v-avatar>
                         <v-avatar size="150px" v-ripple v-else class="mb-3">
-                          <img :src="editedItem.avatar.imageURL" alt="avatar">
+                          <img :src="editedItem.profilPicture" alt="avatar">
                         </v-avatar>
                       </div>
                     </image-input>
@@ -91,7 +91,7 @@
         <td>{{ props.item.firstName }}</td>
         <td>{{ props.item.lastName }}</td>
         <td>{{ props.item.email }}</td>
-        <td>{{ props.item.description }}</td>
+        <td>{{ props.item.description.substring(0,40) + '...' }}</td>
         <td class="layout align-center justify-space-around">
           <v-icon
             small
@@ -217,6 +217,7 @@ export default {
     editItem (item) {
       this.editedIndex = this.coachs.indexOf(item)
       this.editedItem = Object.assign({}, item)
+      console.log(this.editedItem)
       this.dialog = true
     },
 
@@ -246,7 +247,9 @@ export default {
     },
 
     async save () {
-      this.avatarUrl = await this.uploadImage()
+      if (typeof this.editedItem.avatar !== 'undefined') {
+        this.avatarUrl = await this.uploadImage()
+      }
       if (this.editedIndex > -1) { // Edit coach case
         try {
           const edited = await AdminService.editCoach({
