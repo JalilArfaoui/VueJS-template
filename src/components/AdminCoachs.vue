@@ -1,154 +1,136 @@
 <template>
   <div>
-  <AdminNav />
-  <v-layout id="admin-layout" justify-space-around column>
-    <v-toolbar flat color="white">
+    <AdminNav />
+    <v-layout id="admin-layout" justify-space-around column>
+      <v-toolbar flat color="white">
         <v-toolbar-title>Liste des coachs</v-toolbar-title>
         <v-divider
-          class="mx-2"
-          inset
-          vertical
+        class="mx-2"
+        inset
+        vertical
         ></v-divider>
         <v-spacer></v-spacer>
-    <v-dialog v-model="dialog" max-width="500px">
-      <v-btn slot="activator" color="primary" dark class="mb-2">Ajouter un coach</v-btn>
-      <v-card>
-        <v-card-title>
-          <span class="headline">{{ formTitle }}</span>
-        </v-card-title>
-
-        <v-card-text>
-          <v-container grid-list-md>
-            <v-layout wrap>
-              <v-flex xs12 sm10>
-                <v-text-field
-                  v-if=""
-                  v-model="editedItem.firstName"
-                  label="Prénom">
-                </v-text-field>
-                <v-text-field
-                  v-if=""
-                  v-model="editedItem.lastName"
-                  label="Nom">
-                </v-text-field>
-                <v-text-field
-                  v-if=""
-                  v-model="editedItem.email"
-                  label="E-mail">
-                </v-text-field>
-                <v-textarea
-                  v-if=""
-                  v-model="editedItem.description"
-                  label="Description"
-                  counter="500"
-                  flat
-                  multi-line>
-                </v-textarea>
-                <image-input v-model="editedItem.avatar">
-                  <div slot="activator">
-                    <v-avatar size="150px" v-ripple v-if="!editedItem.avatar" class="grey lighten-3 mb-3">
-                      <span>Photo de profil</span>
-                    </v-avatar>
-                    <v-avatar size="150px" v-ripple v-else class="mb-3">
-                      <img :src="editedItem.avatar.imageURL" alt="avatar">
-                    </v-avatar>
-                  </div>
-                </image-input>
-              </v-flex>
-            </v-layout>
-          </v-container>
-          <v-alert
-            v-if='dialogError'
-            :value="dialogError"
-            type="error"
-            dismissible
-            icon="warning"
-            color="error"
-            outline
-            >
-            {{dialogError}}
-          </v-alert>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click="close">Annuler</v-btn>
-          <v-btn color="blue darken-1" flat :loading="saving" @click="save">Valider</v-btn>
-          <!-- <v-btn color="blue darken-1" flat @click="save">Valider</v-btn> -->
-          <!-- <v-slide-x-transition>
-            <div v-if="avatar && saved == false">
-              <v-btn class="primary" @click="save" :loading="saving">Save Avatar</v-btn>
-            </div>
-          </v-slide-x-transition> -->
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-toolbar>
+        <v-dialog v-model="dialog" max-width="500px">
+          <v-btn slot="activator" color="primary" dark class="mb-2">Ajouter un coach</v-btn>
+          <v-card>
+            <v-card-title>
+              <span class="headline">{{ formTitle }}</span>
+            </v-card-title>
+            <v-card-text>
+              <v-container grid-list-md>
+                <v-layout wrap>
+                  <v-flex xs12 sm10>
+                    <image-input v-model="editedItem.avatar">
+                      <div slot="imageUpload" class="text-md-center">
+                        <v-avatar size="150px" v-ripple v-if="!editedItem.avatar" class="grey lighten-3 mb-3 btn">
+                          <span>Photo de profil</span>
+                        </v-avatar>
+                        <v-avatar size="150px" v-ripple v-else class="mb-3">
+                          <img :src="editedItem.avatar.imageURL" alt="avatar">
+                        </v-avatar>
+                      </div>
+                    </image-input>
+                    <v-text-field
+                      v-if=""
+                      v-model="editedItem.firstName"
+                      label="Prénom">
+                    </v-text-field>
+                    <v-text-field
+                      v-if=""
+                      v-model="editedItem.lastName"
+                      label="Nom">
+                    </v-text-field>
+                    <v-text-field
+                      v-if=""
+                      v-model="editedItem.email"
+                      label="E-mail">
+                    </v-text-field>
+                    <v-textarea
+                      v-if=""
+                      v-model="editedItem.description"
+                      label="Description"
+                      counter="500"
+                      flat
+                      multi-line>
+                    </v-textarea>
+                  </v-flex>
+                </v-layout>
+              </v-container>
+              <v-alert
+                v-if='dialogError'
+                :value="dialogError"
+                type="error"
+                dismissible
+                icon="warning"
+                color="error"
+                outline
+                >
+                {{dialogError}}
+              </v-alert>
+            </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue darken-1" flat @click="close">Annuler</v-btn>
+            <v-btn color="blue darken-1" flat :loading="saving" @click="save">Valider</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-toolbar>
 
     <v-data-table
-    :headers="headers"
-    :items="coachs"
-    class="elevation-1"
-    >
-    <template slot="items" slot-scope="props">
-      <td>{{ props.index + 1 }}</td>
-      <td><img :src="props.item.profilPicture" class="profilPicture"></td>
-      <td>{{ props.item.firstName }}</td>
-      <td>{{ props.item.lastName }}</td>
-      <td>{{ props.item.email }}</td>
-      <td>{{ props.item.description }}</td>
-      <td class="layout align-center justify-space-around">
-        <!-- <v-icon
-          small
-          class="mr-2"
-          @click="watchItem(props.item.name)"
-          >
-          remove_red_eye
-        </v-icon> -->
-        <v-icon
-          small
-          class="mr-2"
-          @click="editItem(props.item)"
-          >
-          edit
-        </v-icon>
-        <v-icon
-          small
-          @click="deleteItem(props.item)"
-          >
-          delete
-        </v-icon>
-      </td>
-    </template>
-  </v-data-table>
-  <v-alert
-    v-if='error'
-    :value="error"
-    type="error"
-    dismissible
-    icon="warning"
-    color="error"
-    outline
-    >
-    {{error}}
-  </v-alert>
-</v-layout>
-</div>
+      :headers="headers"
+      :items="coachs"
+      class="elevation-1">
+      <template slot="items" slot-scope="props">
+        <td>{{ props.index + 1 }}</td>
+        <td><img :src="props.item.profilPicture" class="profilPicture"></td>
+        <td>{{ props.item.firstName }}</td>
+        <td>{{ props.item.lastName }}</td>
+        <td>{{ props.item.email }}</td>
+        <td>{{ props.item.description }}</td>
+        <td class="layout align-center justify-space-around">
+          <v-icon
+            small
+            class="mr-2"
+            @click="editItem(props.item)"
+            >
+            edit
+          </v-icon>
+          <v-icon
+            small
+            @click="deleteItem(props.item)"
+            >
+            delete
+          </v-icon>
+        </td>
+      </template>
+    </v-data-table>
+    <v-alert
+      v-if='error'
+      :value="error"
+      type="error"
+      dismissible
+      icon="warning"
+      color="error"
+      outline
+      >
+      {{error}}
+    </v-alert>
+  </v-layout>
+  </div>
 </template>
 
 <script>
 /* eslint-disable no-useless-escape */
-// import Panel from '@/components/Panel'
 import AdminNav from './AdminNav'
-// import { SidebarMenu } from 'vue-sidebar-menu' // left Admin menu
 import AdminService from '../services/AdminService'
-// import { required, minLength, maxLength } from 'vuelidate/lib/validators'
-import imageUpload from './imageUpload.vue'
+import imageUpload from './imageUpload'
 
 export default {
   components: {
     // Panel,
-    AdminNav
+    AdminNav,
+    ImageInput: imageUpload
   },
   data () {
     return {
@@ -186,9 +168,6 @@ export default {
       saved: false
     }
   },
-  components: {
-    ImageInput: imageUpload
-  },
   computed: {
     formTitle () {
       return this.editedIndex === -1 ? 'Nouveau coach' : 'Modifier le coach'
@@ -199,10 +178,10 @@ export default {
       val || this.close()
     },
     avatar: {
-     handler: function() {
-       this.saved = false
-     },
-     deep: true
+      handler: function() {
+        this.saved = false
+      },
+      deep: true
     }
   },
   created () {
@@ -252,6 +231,7 @@ export default {
 
     close () {
       this.dialog = false
+      this.dialogError = ''
       setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
@@ -334,5 +314,8 @@ export default {
 }
 td{
   white-space: pre;
+}
+.btn{
+  cursor: pointer;
 }
 </style>

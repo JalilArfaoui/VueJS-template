@@ -114,11 +114,8 @@
 
 <script>
 /* eslint-disable no-useless-escape */
-// import Panel from '@/components/Panel'
 import AdminNav from './AdminNav'
-// import { SidebarMenu } from 'vue-sidebar-menu' // left Admin menu
 import AdminService from '../services/AdminService'
-// import { required, minLength, maxLength } from 'vuelidate/lib/validators'
 
 export default {
   components: {
@@ -183,6 +180,7 @@ export default {
         this.clients = Object.keys(clients.data).map((key) => {
           return clients.data[key]
         })
+        console.log(this.clients)
       } catch (e) {
         this.error = e.response.data.error
       }
@@ -217,6 +215,7 @@ export default {
 
     close () {
       this.dialog = false
+      this.dialogError = ''
       setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
@@ -253,6 +252,7 @@ export default {
             this.dialogError = 'Modification non prise en compte'
           }
         } catch (error) {
+          // this.dialogError = error.response.data.errors
           this.dialogError = 'Impossible de rajouter ce client. Il est possible qu\'il existe déjà ou que vous n\'avez pas sélectionné un type de client'
         }
       }

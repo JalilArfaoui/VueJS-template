@@ -74,7 +74,7 @@
       <td>{{ props.item.email }}</td>
       <td>{{ props.item.importedAt }}</td>
       <td>{{ props.item.coach.lastName }}</td>
-      <td>{{ props.item.capacity }}</td>
+      <!-- <td>{{ props.item.capacity }}</td> -->
       <td>{{ props.item.state }}</td>
       <td class="layout align-center justify-space-around">
         <v-icon
@@ -141,7 +141,7 @@ export default {
         // { text: 'Client', value: 'company' },
         { text: 'Importé le', value: 'importedAt' },
         { text: 'Coach', value: 'coach' },
-        { text: 'Qualité', value: 'capacity' },
+        // { text: 'Qualité', value: 'capacity' },
         { text: 'Activation', value: 'state' },
         { text: 'Actions', value: 'name', sortable: false }
       ],
@@ -150,7 +150,7 @@ export default {
         name: '',
         company: '',
         email: '',
-        capacity: '',
+        // capacity: '',
         importedAt: null,
         coach: '',
         state: ''
@@ -159,7 +159,7 @@ export default {
         name: '',
         company: this.$store.state.client,
         email: '',
-        capacity: 'user',
+        // capacity: 'user',
         importedAt: null,
         coach: '',
         state: 'newUser'
@@ -199,6 +199,8 @@ export default {
         this.users = Object.keys(users.data).map((key) => {
           return users.data[key]
         })
+        this.users.forEach( user => user.importedAt = new Date(user.importedAt).toLocaleDateString("fr-FR"))
+
       } catch (e) {
         this.error = e.response.data.error
       }
@@ -206,12 +208,9 @@ export default {
     async getCoachs () {
       try {
         const coachs = await AdminService.getCoachs()
-        console.log(coachs)
         this.coachs = Object.keys(coachs.data).map((key) => {
-          console.log(coachs.data)
           return coachs.data[key]
         })
-        console.log(this.coachs.firstName)
       } catch (e) {
         this.error = e.response.data.error
       }
@@ -241,6 +240,7 @@ export default {
 
     close () {
       this.dialog = false
+      this.dialogError = ''
       setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1

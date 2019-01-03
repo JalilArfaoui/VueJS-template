@@ -212,6 +212,7 @@ export default {
 
     close () {
       this.dialog = false
+      this.dialogError = ''
       setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
         this.editedIndex = -1
