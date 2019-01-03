@@ -66,8 +66,12 @@
     <v-data-table
     :headers="headers"
     :items="clients"
+    :pagination.sync="pagination"
     class="elevation-1"
     >
+    <template slot="pageText" slot-scope="props" pageStop="20">
+      Clients {{ props.pageStart }} à {{ props.pageStop }} sur {{ props.itemsLength }}
+    </template>
     <template slot="items" slot-scope="props">
       <td>{{ props.index + 1 }}</td>
       <td>{{ props.item.name }}</td>
@@ -136,6 +140,9 @@ export default {
         { text: 'Type', value: 'type' },
         { text: 'Actions', value: 'name', sortable: false }
       ],
+      pagination: {
+        rowsPerPage: 25
+      },
       editedIndex: -1,
       editedItem: {
         name: '',

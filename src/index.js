@@ -5,6 +5,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import Vuetify from 'vuetify'
+import fr from 'vuetify/es5/locale/fr'
 import { sync } from 'vuex-router-sync'
 import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css' // Ensure you are using css-loader
@@ -22,6 +23,10 @@ Vue.use(Vuetify, {
     secondary: '#b0bec5',
     accent: '#8c9eff',
     error: '#b71c1c'
+  },
+  lang: {
+    locales: { fr },
+    current: 'fr'
   }
 })
 

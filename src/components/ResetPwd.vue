@@ -10,7 +10,7 @@
         v-model="valid"
         ref="form">
         <p v-show="!auth">
-          Afin de vérifier votre identité, un e-mail vient de vous être envoyé avec un code. Recopiez ce code ci-dessous pour terminer votre inscription. Si vous ne le trouvez pas dans votre boite mail, vérifiez dans vos spams.
+          Avant de réinitialiser votre mot de passe, nous avons besoin de vérifier votre identité. Un e-mail vient de vous être envoyé avec un code de renouvellement. Recopiez ce code ci-dessous. Si vous ne le trouvez pas dans votre boite mail, vérifiez dans vos spams.
         </p>
         <v-text-field
           v-show="!auth"

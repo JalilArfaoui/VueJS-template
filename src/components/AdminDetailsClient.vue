@@ -67,8 +67,12 @@
     <v-data-table
     :headers="headers"
     :items="users"
+    :pagination.sync="pagination"
     class="elevation-1"
     >
+    <template slot="pageText" slot-scope="props" pageStop="20">
+      Utilisateurs {{ props.pageStart }} à {{ props.pageStop }} sur {{ props.itemsLength }}
+    </template>
     <template slot="items" slot-scope="props">
       <td>{{ props.item.name }}</td>
       <td>{{ props.item.email }}</td>
@@ -145,6 +149,9 @@ export default {
         { text: 'Activation', value: 'state' },
         { text: 'Actions', value: 'name', sortable: false }
       ],
+      pagination: {
+        rowsPerPage: 25
+      },
       editedIndex: -1,
       editedItem: {
         name: '',
@@ -162,7 +169,7 @@ export default {
         // capacity: 'user',
         importedAt: null,
         coach: '',
-        state: 'newUser'
+        state: 'Invité'
       },
       capacities: [
         'user',
@@ -268,9 +275,8 @@ export default {
             company: this.company
           })
           if (res.data.user.email) {
-            console.log(res.data.user)
             this.editedItem = res.data.user
-            console.log(this.editedItem)
+            this.editedItem.importedAt = new Date(this.editedItem.importedAt).toLocaleDateString("fr-FR")
 
             this.users.push(this.editedItem)
             this.close()

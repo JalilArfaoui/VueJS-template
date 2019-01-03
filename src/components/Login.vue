@@ -166,10 +166,10 @@ export default {
           const state = await AuthenticationService.findByEmail({
             email: this.email
           })
-          if (state.data === 'newUser') {
+          if (state.data === 'Invité') {
             this.newUser = true
             this.confirmedUser = false
-          } else if (state.data === 'confirmedUser') {
+          } else if (state.data === 'Activé') {
             this.newUser = false
             this.confirmedUser = true
           }

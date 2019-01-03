@@ -80,7 +80,11 @@
     <v-data-table
       :headers="headers"
       :items="coachs"
+      :pagination.sync="pagination"
       class="elevation-1">
+      <template slot="pageText" slot-scope="props" pageStop="20">
+        Coachs {{ props.pageStart }} à {{ props.pageStop }} sur {{ props.itemsLength }}
+      </template>
       <template slot="items" slot-scope="props">
         <td>{{ props.index + 1 }}</td>
         <td><img :src="props.item.profilPicture" class="profilPicture"></td>
@@ -148,6 +152,9 @@ export default {
         { text: 'Description', value: 'description' },
         { text: 'Actions', value: 'name', sortable: false }
       ],
+      pagination: {
+        rowsPerPage: 25
+      },
       editedIndex: -1,
       editedItem: {
         firstName: '',
