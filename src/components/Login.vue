@@ -36,6 +36,7 @@
           v-model="email"
           required
           :rules="emailRules"
+          autocomplete="false"
           >
         </v-text-field>
         <br>
