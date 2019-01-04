@@ -94,7 +94,7 @@
         </v-icon>
         <v-icon
           small
-          @click="deleteItem(props.item)"
+          @click="tryDelete(props.item)"
           >
           delete
         </v-icon>
@@ -112,6 +112,32 @@
     >
     {{error}}
   </v-alert>
+  <v-dialog v-model="deleteClientUser" max-width="500px">
+    <v-card>
+      <v-card-title>
+        <span class="headline">Suppresion d'un client avec utilisateurs</span>
+      </v-card-title>
+
+      <v-card-text>
+        <v-alert
+          v-if='deleteClientUser'
+          :value="deleteClientUser"
+          type="error"
+          icon="warning"
+          color="error"
+          outline
+          >
+          Vous vous apprétez à supprimer un client qui comporte des utilisateurs. Si vous poursuivez, tous ces utilisateurs seront également supprimé et ne pouront plus accéder à leur comptes. L'ensemble de leurs fichiers seront perdus.
+        </v-alert>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="blue darken-1" flat @click="close">Annuler</v-btn>
+        <v-btn color="blue darken-1" flat @click="deleteItem()">Confirmer</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </v-layout>
 </div>
 </template>
@@ -132,7 +158,10 @@ export default {
       dialog: false,
       error: '',
       dialogError: '',
+      deleteClientUser: false,
+      deletingItem: {},
       clients: [],
+      clientIndex: '',
       headers: [
         { text: '#', value: 'index' },
         { text: 'Entreprise', value: 'name' },
@@ -187,7 +216,6 @@ export default {
         this.clients = Object.keys(clients.data).map((key) => {
           return clients.data[key]
         })
-        console.log(this.clients)
       } catch (e) {
         this.error = e.response.data.error
       }
@@ -203,16 +231,30 @@ export default {
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
-
+    tryDelete (item) {
+      if(item.nbUsers == 0){
+        this.deleteItem(item)
+      } else {
+        this.deletingItem = item
+        this.deleteClientUser = true
+      }
+    },
     async deleteItem (item) {
-      const index = this.clients.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      var conf = confirm('Êtes vous sûr de vouloir supprimer ce client ?')
+      if(item) {
+        this.clientIndex = this.clients.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        var conf = confirm('Êtes vous sûr de vouloir supprimer ce client ?')
+      } else {
+        this.deleteClientUser = false
+        this.clientIndex = this.clients.indexOf(this.deletingItem)
+        this.editedItem = Object.assign({}, this.deletingItem)
+        var conf = true
+      }
       if (conf) {
         try {
           const deleted = await AdminService.deleteClient(this.editedItem._id)
           if (deleted) {
-            this.clients.splice(index, 1)
+            this.clients.splice(this.clientIndex, 1)
           }
         } catch (e) {
           this.error = e.response.data.error

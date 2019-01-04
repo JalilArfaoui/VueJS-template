@@ -35,6 +35,7 @@
           required
           :rules="passwordRules"
           :counter="34"
+          autocomplete="false"
           >
         </v-text-field>
       </v-form>

@@ -23,7 +23,7 @@
     }),
     props: {
       // Use "value" here to enable compatibility with v-model
-      value: Object,
+      value: String,
     },
     methods: {
       launchFilePicker(){

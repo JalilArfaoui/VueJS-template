@@ -20,10 +20,13 @@
               <v-container grid-list-md>
                 <v-layout wrap>
                   <v-flex xs12 sm10>
-                    <image-input v-model="editedItem.avatar">
+                    <image-input v-model="editedItem.profilPicture">
                       <div slot="imageUpload" class="text-md-center">
                         <v-avatar size="150px" v-ripple v-if="!editedItem.profilPicture" class="grey lighten-3 mb-3 btn">
                           <span>Insérer une photo carré inférieure à 1MB</span>
+                        </v-avatar>
+                        <v-avatar size="150px" v-ripple v-else-if="editedItem.profilPicture.imageURL" class="mb-3">
+                          <img :src="editedItem.profilPicture.imageURL" alt="avatar">
                         </v-avatar>
                         <v-avatar size="150px" v-ripple v-else class="mb-3">
                           <img :src="editedItem.profilPicture" alt="avatar">
@@ -170,7 +173,7 @@ export default {
         description: '',
         profilPicture: null
       },
-      avatarUrl: null,
+      avatarUrl: 'https://talkiteasy-dev-avatar.s3.eu-west-3.amazonaws.com/1546609162262',
       saving: false,
       saved: false
     }
@@ -247,9 +250,12 @@ export default {
     },
 
     async save () {
-      if (typeof this.editedItem.avatar !== 'undefined') {
+      console.log(this.editedItem.profilPicture);
+      // if (typeof this.editedItem.profilPicture !== 'undefined') {
+      if (this.editedItem.profilPicture !== null) {
         this.avatarUrl = await this.uploadImage()
       }
+      console.log(this.avatarUrl);
       if (this.editedIndex > -1) { // Edit coach case
         try {
           const edited = await AdminService.editCoach({
@@ -268,7 +274,8 @@ export default {
             this.dialogError = 'Modification non prise en compte'
           }
         } catch (e) {
-          this.dialogError = 'Modification non prise en compte. Il est possible que ce nom existe déjà'
+          this.dialogError = e.response.data
+          // this.dialogError = 'Modification non prise en compte. Il est possible que ce nom existe déjà'
         }
       } else { // New coach case
         try {
@@ -287,15 +294,15 @@ export default {
             this.dialogError = 'Modification non prise en compte'
           }
         } catch (error) {
-          this.dialogError = error.response.data.errors
-          // this.dialogError = 'Impossible de rajouter ce coach. Vérifier que vous avez rempli les champs Prénom, Nom et E-mail. Si c\'est le cas, il est probable qu\'il existe déjà.'
+          // this.dialogError = error.response.data
+          this.dialogError = 'Impossible de rajouter ce coach. Vérifier que vous avez rempli les champs Prénom, Nom et E-mail. Si c\'est le cas, il est probable qu\'il existe déjà.'
         }
       }
     },
     async uploadImage() {
       this.saving = true
       try {
-        const avatarUrl = await AdminService.avatarUpload(this.editedItem.avatar.formData)
+        const avatarUrl = await AdminService.avatarUpload(this.editedItem.profilPicture.formData)
         this.savedAvatar()
         return avatarUrl.data.imageUrl
       } catch (error) {

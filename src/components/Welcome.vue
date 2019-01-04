@@ -182,9 +182,18 @@ export default {
             email: this.email
           })
           if (response) {
+            console.log(response);
             this.$store.dispatch('setToken', response.data.token)
             this.$store.dispatch('setUser', response.data.user)
-              .then(() => this.$router.push('/dashboard'))
+
+            if (response.data.user.capacity === 'admin') {
+              // set admin to true in the store
+              this.$store.dispatch('setAdmin', response.data.user)
+                .then(() => this.$router.push('/admin'))
+            } else {
+              this.$router.push('/dashboard')
+            }
+
           } else {
             this.error = response.error
           }

@@ -167,7 +167,7 @@ export default {
     }
   },
   created () {
-    this.getUsers()
+    // this.getUsers()
   },
   mounted () {
     if (localStorage.name) {
