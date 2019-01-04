@@ -8,20 +8,20 @@
     </v-toolbar-title>
     <v-spacer></v-spacer>
     <v-toolbar-items class="">
-      <v-btn flat v-if="$store.state.isUserAdmin">
-        <router-link to="admin">
+      <v-btn @click="toAdmin" flat v-if="$store.state.isUserAdmin">
+        <!-- <router-link to="admin" v-if="$store.state.isUserAdmin"> -->
           Admin
-        </router-link>
+        <!-- </router-link> -->
       </v-btn>
-      <v-btn flat >
-        <router-link to="mediacapture">
+      <v-btn flat @click="toMediaCapture">
+        <!-- <router-link to="mediacapture"> -->
           Vidéo
-        </router-link>
+        <!-- </router-link> -->
       </v-btn>
-      <v-btn flat v-if="!$store.state.isUserLoggedIn">
-        <router-link to="login">
+      <v-btn @click="toLogin" flat v-if="!$store.state.isUserLoggedIn">
+        <!-- <router-link to="login" v-if="!$store.state.isUserLoggedIn"> -->
           Connexion
-        </router-link>
+        <!-- </router-link> -->
       </v-btn>
       <v-btn flat
       v-if="$store.state.isUserLoggedIn"
@@ -43,6 +43,15 @@ export default {
       this.$store.dispatch('setUser', null)
         .then(() => this.$router.push('/login'))
       // .then(() => this.$router.push('/login '))
+    },
+    toLogin () {
+      this.$router.push('/login')
+    },
+    toAdmin () {
+      this.$router.push('/admin')
+    },
+    toMediaCapture () {
+      this.$router.push('/mediacapture')
     }
   }
 }

@@ -3,19 +3,24 @@
 </template>
 
 <script>
+import { SidebarMenu } from 'vue-sidebar-menu'
+
 export default {
   name: 'adminNav',
+  components: {
+    SidebarMenu
+  },
   data () {
     return {
       menu: [
         {
           header: true,
-          title: 'Main Navigation'
+          title: 'Menu Admin'
         },
         {
           href: '/adminclients',
           title: 'Gestion des clients',
-          icon: 'fa fa-user'
+          icon: 'fas fa-minus'
         },
         {
           href: '/admincoachs',
@@ -38,6 +43,11 @@ export default {
               icon: 'fa fa-lock'
             }
           ]
+        },
+        {
+          href: '/administration',
+          title: 'Administration',
+          icon: '<v-icon small> delete </v-icon>'
         }
       ],
       collapsed: true,
@@ -62,3 +72,4 @@ export default {
   z-index: 42;
 }
 </style>
+<!-- https://github.com/yaminncco/vue-sidebar-menu -->

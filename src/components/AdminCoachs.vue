@@ -51,7 +51,7 @@
                       label="Description"
                       counter="500"
                       flat
-                      multi-line>
+                      single-line>
                     </v-textarea>
                   </v-flex>
                 </v-layout>
