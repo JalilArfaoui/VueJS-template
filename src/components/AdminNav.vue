@@ -1,5 +1,5 @@
 <template>
-    <sidebar-menu id="AdminNav" :class="{'collapsed' : collapsed}" :menu="menu" :collapsed="collapsed" @collapse="onCollapse" />
+    <sidebar-menu id="AdminNav" :class="{'collapsed' : collapsed}" :menu="menu" :collapsed="collapsed" @collapse="onCollapse" :theme="selectedTheme"/>
 </template>
 
 <script>
@@ -51,7 +51,9 @@ export default {
         }
       ],
       collapsed: true,
-      showChild: true
+      showChild: true,
+      theme: ['', 'white-theme'],
+      selectedTheme: 'white-theme'
     }
   },
   methods: {

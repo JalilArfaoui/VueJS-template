@@ -11,7 +11,7 @@
         ></v-divider>
         <v-spacer></v-spacer>
     <v-dialog v-model="dialog" max-width="500px">
-      <v-btn slot="activator" color="primary" dark class="mb-2">Nouvel utilisateur</v-btn>
+      <v-btn slot="activator" color="primary" dark class="mb-2">Nouvel admin</v-btn>
       <v-card>
         <v-card-title>
           <span class="headline">{{ formTitle }}</span>
@@ -65,18 +65,18 @@
     >
     <template slot="items" slot-scope="props">
       <td>{{ props.item.name }}</td>
-      <td>{{ props.item.company }}</td>
+      <!-- <td>{{ props.item.company }}</td> -->
       <td>{{ props.item.email }}</td>
       <td>{{ props.item.capacity }}</td>
       <td>{{ props.item.state }}</td>
       <td class="layout align-center justify-space-around">
-        <v-icon
+        <!-- <v-icon
           small
           class="mr-2"
           @click="editItem(props.item)"
           >
           edit
-        </v-icon>
+        </v-icon> -->
         <v-icon
           small
           @click="deleteItem(props.item)"
@@ -128,7 +128,7 @@ export default {
           sortable: false,
           value: 'name'
         },
-        { text: 'Entreprise', value: 'company' },
+        // { text: 'Entreprise', value: 'company' },
         { text: 'Email', value: 'email' },
         { text: 'Qualité', value: 'capacity' },
         { text: 'Activation', value: 'state' },
@@ -146,11 +146,10 @@ export default {
         name: '',
         company: '',
         email: '',
-        capacity: 'user',
+        capacity: 'admin',
         state: 'newUser'
       },
       capacities: [
-        'user',
         'admin'
       ]
     }
@@ -220,9 +219,8 @@ export default {
     },
 
     async save () {
-      if (this.editedIndex > -1) {
+      if (this.editedIndex > -1) { // Edit case
         try {
-          console.log(this.editedItem)
           const edited = await AdminService.editUser(this.editedItem)
           if (edited) {
             Object.assign(this.users[this.editedIndex], this.editedItem)
@@ -233,20 +231,22 @@ export default {
         } catch (e) {
           this.error = e.response.data.error
         }
-      } else {
+      } else { // New user case
         try {
-          console.log(this.editedItem)
-          const res = await AdminService.register({
+          const res = await AdminService.registerAdmin({
             email: this.editedItem.email
           })
           if (res.data.user.email) {
+            console.log(res.data.user)
+            this.editedItem.capacity = res.data.user.capacity
+            this.editedItem.state = res.data.user.state
             this.users.push(this.editedItem)
             this.close()
           } else {
             this.dialogError = 'Modification non prise en compte'
           }
         } catch (error) {
-          this.error = error.response.data.error
+          this.dialogError = error.response.data.error
         }
       }
     }

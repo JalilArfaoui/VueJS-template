@@ -22,6 +22,9 @@ export default {
     // this makes a post request to the register endpoint on the express server using the credentials passed
     return Api().post('register', credentials)
   },
+  registerAdmin (credentials) {
+    return Api().post('registerAdmin', credentials)
+  },
   getUsers (company) {
     // this makes a get request to the register endpoint on the express server using the credentials passed
     return Api().get('getUsers/' + company)
