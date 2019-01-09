@@ -29,42 +29,42 @@
         ref="form"
         v-on:keyup.enter="submit"
         >
-        <v-text-field
-          label="Email"
-          type="email"
-          name="email"
-          v-model="email"
-          required
-          :rules="emailRules"
-          autocomplete="false"
-          >
-        </v-text-field>
-        <br>
-        <v-text-field
-          v-show="confirmedUser"
-          label="Mot de passe"
-          type="password"
-          name="password"
-          v-model="password"
-          required
-          :rules="passwordRules"
-          :counter="34"
-          >
-        </v-text-field>
-        <!-- <router-link
-          v-show="confirmedUser"
-          name="resetPwd"
-          to="/resetPwd"
-          tag="pwdReset"
-          @click="pwdReset"
-          > -->
+          <v-text-field
+            label="Email"
+            type="email"
+            name="email"
+            v-model="email"
+            required
+            :rules="emailRules"
+            autocomplete="false"
+            >
+          </v-text-field>
+          <br>
+          <v-text-field
+            v-show="confirmedUser"
+            label="Mot de passe"
+            type="password"
+            name="password"
+            v-model="password"
+            required
+            :rules="passwordRules"
+            :counter="34"
+            >
+          </v-text-field>
+          <!-- <router-link
+            v-show="confirmedUser"
+            name="resetPwd"
+            to="/resetPwd"
+            tag="pwdReset"
+            @click="pwdReset"
+            > -->
           <a
             v-show="confirmedUser"
             @click="pwdReset">
             Mot de passe oublié ?
           </a>
-        <!-- </router-link> -->
-      </v-form>
+          <!-- </router-link> -->
+        </v-form>
         <br>
         <v-alert
           v-if='error'
@@ -80,15 +80,23 @@
         <br>
         <v-btn
           v-show="confirmedUser"
-          dark
+          :disabled="!valid"
+          color="primary"
           @click="login"
-          :class="{ red: !valid, green: valid }">
+          >
           Connexion
         </v-btn>
-        <v-btn
+        <!-- <v-btn
           v-show="newUser"
           dark
           @click="demarrer"
+          class="green">
+          Démarrer
+        </v-btn> -->
+        <v-btn
+          v-show="!confirmedUser"
+          dark
+          @click="isUser"
           class="green">
           Démarrer
         </v-btn>
@@ -135,12 +143,13 @@ export default {
   },
   watch: {
     email: function () {
-      this.debouncedGetAnswer()
+      console.log(this.emailRules);
+    //   this.debouncedGetAnswer()
     }
   },
   created: function () {
     this.email = this.$store.state.user
-    this.debouncedGetAnswer = _.debounce(this.isUser, 20)
+    // this.debouncedGetAnswer = _.debounce(this.isUser, 20)
   },
   mounted () {
     if (this.$route.query.authRequired) {
@@ -169,6 +178,7 @@ export default {
           if (state.data === 'Invité') {
             this.newUser = true
             this.confirmedUser = false
+            this.demarrer()
           } else if (state.data === 'Activé') {
             this.newUser = false
             this.confirmedUser = true

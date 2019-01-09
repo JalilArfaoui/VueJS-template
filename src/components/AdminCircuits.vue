@@ -1,7 +1,7 @@
 <template>
   <div>
   <AdminNav />
-  <!-- <v-layout id="admin-layout" justify-space-around column> -->
+  <v-layout id="admin-layout" justify-space-around column>
     <v-toolbar flat color="white">
       <v-toolbar-title>Circuits</v-toolbar-title>
       <v-divider
@@ -194,7 +194,7 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
-<!-- </v-layout> -->
+</v-layout>
 </div>
 </template>
 

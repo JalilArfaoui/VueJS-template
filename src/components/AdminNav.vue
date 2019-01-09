@@ -4,6 +4,7 @@
 
 <script>
 import { SidebarMenu } from 'vue-sidebar-menu'
+import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
 
 export default {
   name: 'adminNav',
@@ -13,10 +14,10 @@ export default {
   data () {
     return {
       menu: [
-        {
-          header: true,
-          title: 'Menu Admin'
-        },
+        // {
+        //   header: false,
+        //   title: 'Menu Admin'
+        // },
         {
           href: '/adminclients',
           title: 'Gestion des clients',
@@ -25,24 +26,12 @@ export default {
         {
           href: '/admincoachs',
           title: 'Gestion des Coachs',
-          icon: '<v-icon small> delete </v-icon>'
+          icon: 'fas fa-user'
         },
         {
-          href: '/tables',
+          href: '/admincircuits',
           title: 'Gestion des circuits',
-          icon: 'fa fa-table',
-          child: [
-            {
-              href: '/auth/login',
-              title: 'Login Page',
-              icon: 'fa fa-lock'
-            },
-            {
-              href: '/auth/registration',
-              title: 'Registration Page',
-              icon: 'fa fa-lock'
-            }
-          ]
+          icon: 'fas fa-igloo'
         },
         {
           href: '/administration',
@@ -72,6 +61,12 @@ export default {
   left:0;
   right:0;
   z-index: 42;
+  background-color: #00bcd4 !important;
+}
+.v-sidebar-menu .vsm-arrow:after{font-family: FontAwesome}
+.v-sidebar-menu .collapse-btn:after {
+content: "\f07e";
+font-family: FontAwesome;
 }
 </style>
 <!-- https://github.com/yaminncco/vue-sidebar-menu -->
