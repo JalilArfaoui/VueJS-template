@@ -60,7 +60,7 @@
             > -->
           <a
             v-show="confirmedUser"
-            @click="pwdReset">
+            @click="reseting ? '' : pwdReset()">
             Mot de passe oublié ?
           </a>
           <!-- </router-link> -->
@@ -138,14 +138,14 @@ export default {
       userEmail: null,
       confirmedUser: null,
       newUser: null,
-      unknownUser: null
+      unknownUser: null,
+      reseting: false
     }
   },
   watch: {
-    email: function () {
-      console.log(this.emailRules);
+    // email: function () {
     //   this.debouncedGetAnswer()
-    }
+    // }
   },
   created: function () {
     this.email = this.$store.state.user
@@ -215,8 +215,7 @@ export default {
       }
     },
     async pwdReset () {
-      // console.log(this.email)
-      // console.log('hello')
+      this.reseting = true
       try {
         AuthenticationService.resetHash({
           to: this.email
