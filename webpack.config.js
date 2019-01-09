@@ -11,6 +11,7 @@ function resolve (dir) {
 }
 
 module.exports = {
+  devtool: 'source-map',
   resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {

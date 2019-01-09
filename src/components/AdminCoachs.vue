@@ -90,7 +90,7 @@
       </template>
       <template slot="items" slot-scope="props">
         <td>{{ props.index + 1 }}</td>
-        <td><img :src="props.item.profilPicture" class="profilPicture"></td>
+        <td><img :src="props.item.profilPicture" class="profilPicture"></td>  <!-- use vuetify avatar -->
         <td>{{ props.item.firstName }}</td>
         <td>{{ props.item.lastName }}</td>
         <td>{{ props.item.email }}</td>

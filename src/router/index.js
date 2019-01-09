@@ -15,6 +15,7 @@ import AdminDetailsClient from '../components/AdminDetailsClient.vue'
 import AdminUsers from '../components/AdminUsers.vue'
 import AdminCoachs from '../components/AdminCoachs.vue'
 import Administration from '../components/Administration.vue'
+import AdminCircuits from '../components/AdminCircuits.vue'
 
 Vue.use(Router)
 
@@ -107,6 +108,15 @@ let router = new Router({
       path: '/administration',
       name: 'administration',
       component: Administration,
+      meta: {
+        requiresAuth: true,
+        requiresAdminAuth: true
+      }
+    },
+    {
+      path: '/admincircuits',
+      name: 'admincircuits',
+      component: AdminCircuits,
       meta: {
         requiresAuth: true,
         requiresAdminAuth: true

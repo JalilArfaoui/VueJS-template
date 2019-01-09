@@ -140,10 +140,9 @@ export default {
   },
   created: function () {
     this.email = this.$store.state.user
-    this.debouncedGetAnswer = _.debounce(this.isUser, 400)
+    this.debouncedGetAnswer = _.debounce(this.isUser, 20)
   },
   mounted () {
-    console.log(process.env.VUE_APP_SERVER_PORT)
     if (this.$route.query.authRequired) {
       this.authRequired = this.$route.query.authRequired
     }
