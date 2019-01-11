@@ -65,8 +65,8 @@
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" flat @click="close">Annuler</v-btn>
             <v-btn color="blue darken-1" v-if="this.level === 'firstLevel'" flat @click="saveFirstLevel">Valider</v-btn>
-            <v-btn color="blue darken-1" v-else-if="this.level === 'item' || 'itemCreation'" flat @click="saveItem">Valider</v-btn>
-            <v-btn color="blue darken-1" v-else flat @click="saveSecondLevel">Valider</v-btn>
+            <v-btn color="blue darken-1" v-else-if="this.level === 'secondLevel'" flat @click="saveSecondLevel">Valider</v-btn>
+            <v-btn color="blue darken-1" v-else flat @click="saveItem">Valider</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
