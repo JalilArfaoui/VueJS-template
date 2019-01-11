@@ -11,7 +11,15 @@
       ></v-divider>
       <v-spacer></v-spacer>
       <v-dialog v-model="dialog" max-width="500px">
-        <v-btn slot="activator" color="primary" dark class="mb-2">Ajouter un Niveau</v-btn>
+        <v-btn
+          slot="activator"
+          color="blue"
+          dark
+          class="mb-2"
+          @click="level = 'firstLevel', editingIndex = -1"
+        >
+          Ajouter un Niveau
+        </v-btn>
         <v-card>
           <v-card-title>
             <span class="headline">{{ formTitle }} {{ levelNum }}</span>
@@ -23,7 +31,7 @@
                 <v-flex xs12 sm10>
                   <v-text-field
                     v-if=""
-                    v-model="editedItem.name"
+                    v-model="editinglevel.name"
                     label="Nom du niveau">
                   </v-text-field>
                 </v-flex>
@@ -45,7 +53,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" flat @click="close">Annuler</v-btn>
-            <v-btn color="blue darken-1" v-if="this.item === 'firstLevel'" flat @click="saveFirstLevel">Valider</v-btn>
+            <v-btn color="blue darken-1" v-if="this.level === 'firstLevel'" flat @click="saveFirstLevel">Valider</v-btn>
             <v-btn color="blue darken-1" v-else flat @click="saveSecondLevel">Valider</v-btn>
           </v-card-actions>
         </v-card>
@@ -92,20 +100,60 @@
         :key="index"
       >
       <v-btn
-        color="pink"
+        color="blue"
         dark
         small
         centered
         fab
-        @click="item = 'secondLevel', dialog = true"
+        @click="level = 'secondLevel', dialog = true"
       >
         <v-icon>add</v-icon>
       </v-btn>
-        <v-card flat
-          v-for="(secondLevelId, index) in firstLevel.subLevels"
-          :key="secondLevelId">
-        <!-- <v-card flat> -->
-           <v-container
+        <!-- <v-card flat -->
+        <v-toolbar
+          color="pink"
+          dark
+          v-for="(secondLevel, index) in firstLevel.secondLevels"
+          :key="secondLevel._id"
+        >
+
+          <v-toolbar-title>{{secondLevel}}</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon
+          @click="editSecondLevel(secondLevel)"
+            >
+            <v-icon>edit</v-icon>
+          </v-btn>
+          <v-btn icon
+            @click="tryDeleteSecondLevel(secondLevel)"
+            >
+            <v-icon>delete</v-icon>
+          </v-btn>
+        </v-toolbar>
+
+        <!-- <v-card>
+          <v-container
+            fluid
+            grid-list-lg
+          >
+            <v-layout row wrap>
+              <v-flex xs12
+                v-for="(item, index) in secondLevel.items"
+                :key="item"
+              >
+                <v-card color="blue-grey darken-2" class="white--text">
+                  <v-card-title primary-title>
+                    <div>
+                      <div class="headline">{{getItemById(itemId)}}</div>
+                    </div>
+                  </v-card-title>
+                </v-card>
+              </v-flex>
+
+            </v-layout>
+          </v-container>
+        </v-card> -->
+           <!-- <v-container
             fluid
             grid-list-lg
             >
@@ -135,25 +183,22 @@
                       <v-icon>delete</v-icon>
                     </v-btn>
                   </v-card-title>
-                  <!-- <v-card-actions>
-                    <v-btn flat dark>Listen now</v-btn>
-                  </v-card-actions> -->
                 </v-card>
 
               </v-flex>
             </v-layout>
-          </v-container>
+          </v-container> -->
           <v-btn
-            color="pink"
+            color="blue"
             dark
             small
             centered
             fab
-            @click="item = 'secondLevel', dialog = true, position = index"
+            @click="level = 'secondLevel', dialog = true, position = index"
           >
             <v-icon>add</v-icon>
           </v-btn>
-        </v-card>
+        <!-- </v-card> -->
 
       </v-tab-item>
     </v-tabs-items>
@@ -171,7 +216,7 @@
   <v-dialog v-model="deleteFL" max-width="500px">
     <v-card>
       <v-card-title>
-        <span class="headline">Suppresion d'un client avec utilisateurs</span>
+        <span class="headline">Suppresion d'un niveau avec dépendances</span>
       </v-card-title>
 
       <v-card-text>
@@ -190,7 +235,8 @@
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" flat @click="close">Annuler</v-btn>
-        <v-btn color="blue darken-1" flat @click="deleteItem()">Confirmer</v-btn>
+        <v-btn color="red darken-1" v-if="this.level === 'firstLevel'" flat @click="deleteFirstLevel">Supprimer</v-btn>
+        <v-btn color="red darken-1" v-else flat @click="deleteSecondLevel">Supprimer</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -202,6 +248,7 @@
 /* eslint-disable no-useless-escape */
 import AdminNav from './AdminNav'
 import LevelService from '../services/LevelService'
+import ItemService from '../services/ItemService'
 
 export default {
   components: {
@@ -216,28 +263,32 @@ export default {
       dialogError: '',
       deleteFL: false,
       deleteSL: false,
-      deletingItem: {},
+      deletinglevel: {},
       firstLevels: [],
       secondLevels: [],
-      item: 'firstLevel',
-      itemIndex: '',
+      items: [],
+      level: 'firstLevel',
+      levelIndex: '',
       activeFL: 0,
+      currentFL: {},
+      currentSL: {},
+      currentItem: {},
       position: 0,
-      editedIndex: -1,
-      editedItem: {
+      editingIndex: -1,
+      editinglevel: {
         name: ''
       },
-      defaultItem: {
+      defaultlevel: {
         name: ''
       }
     }
   },
   computed: {
     formTitle () {
-      return this.editedIndex === -1 ? 'Nouveau niveau': 'Modifier le niveau n°'
+      return this.editingIndex === -1 ? 'Nouveau niveau': 'Modifier le niveau n°'
     },
     levelNum () {
-      return this.item === 'firstLevel' ? '1': '2'
+      return this.level === 'firstLevel' ? '1': '2'
     }
   },
   watch: {
@@ -247,7 +298,6 @@ export default {
   },
   created () {
     this.getFirstLevels()
-    this.getSecondLevels()
   },
   mounted () {
     if (localStorage.name) {
@@ -258,12 +308,6 @@ export default {
     }
   },
   methods: {
-    getSLById (id) {
-      return this.secondLevels.find(x => x._id === id)
-    },
-    getSLNameById (id) {
-      return this.secondLevels.find(x => x._id === id).name
-    },
     async getFirstLevels () {
       try {
         const firstLevels = await LevelService.getFirstLevels()
@@ -274,110 +318,21 @@ export default {
         this.error = e.response.data.error
       }
     },
-    async getSecondLevels () {
-      try {
-        const secondLevels = await LevelService.getSecondLevels()
-        this.secondLevels = Object.keys(secondLevels.data).map((key) => {
-          return secondLevels.data[key]
-        })
-      } catch (e) {
-        this.error = e.response.data.error
-      }
-    },
-    editFirstLevel (item) {
-      this.editedIndex = this.firstLevels.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.item = 'firstLevel'
+    editFirstLevel (level) {
+      this.editingIndex = this.firstLevels.indexOf(level)
+      this.editinglevel = Object.assign({}, level)
+      this.level = 'firstLevel'
       this.dialog = true
     },
-    editSecondLevel (item) {
-      this.editedIndex = this.secondLevels.indexOf(item)
-      this.editedItem = Object.assign({}, item)
-      this.item = 'secondLevel'
-      this.dialog = true
-    },
-    tryDeleteFirstLevel (item) {
-      console.log(item);
-      if(item.subLevels == 0 || item.subLevels == undefined){
-        this.deleteFirstLevel(item)
-      } else {
-        this.deletingItem = item
-        this.deleteFL = true
-      }
-    },
-    async deleteFirstLevel (item) {
-      if(item) {
-        this.itemIndex = this.firstLevels.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        var conf = confirm('Êtes vous sûr de vouloir supprimer ce niveau ?')
-      } else {
-        this.deleteFL = false
-        this.itemIndex = this.firstLevels.indexOf(this.deletingItem)
-        this.editedItem = Object.assign({}, this.deletingItem)
-        var conf = true
-      }
-      if (conf) {
-        try {
-          const deleted = await LevelService.deleteFirstLevel(this.editedItem._id)
-          if (deleted) {
-            this.firstLevels.splice(this.itemIndex, 1)
-          }
-        } catch (err) {
-          this.error = err.response.data.error
-        }
-
-      }
-    },
-    tryDeleteSecondLevel (item) {
-      // if(item.subLevels == 0){
-        this.deleteSecondLevel(item)
-      // } else {
-        // this.deletingItem = item
-        // this.deleteSL = true
-      // }
-    },
-    async deleteSecondLevel (item) {
-      if(item) {
-        this.itemIndex = this.secondLevels.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        var conf = confirm('Êtes vous sûr de vouloir supprimer ce niveau ?')
-      } else {
-        this.deleteSL = false
-        this.itemIndex = this.secondLevels.indexOf(this.deletingItem)
-        this.editedItem = Object.assign({}, this.deletingItem)
-        var conf = true
-      }
-      if (conf) {
-        try {
-          const deleted = await LevelService.deleteSecondLevel(this.editedItem._id)
-          if (deleted) {
-            this.secondLevels.splice(this.itemIndex, 1)
-            this.firstLevels[this.activeFL].subLevels.splice(this.firstLevels[this.activeFL].subLevels.indexOf(deleted.data._id), 1)
-            // this.firstLevels.find(x => x.subLevels.find(sub => sub == this.editedItem._id)).subLevels.splice(this.itemIndex, 1)
-          }
-        } catch (error) {
-          this.dialogError = error.response.data.errors
-        }
-      }
-    },
-    close () {
-      this.dialog = false
-      this.dialogError = ''
-      setTimeout(() => {
-        this.editedItem = Object.assign({}, this.defaultItem)
-        this.editedIndex = -1
-      }, 300)
-    },
-
     async saveFirstLevel () {
-      if (this.editedIndex > -1) {
+      if (this.editingIndex > -1) {
         try {
-          const edited = await LevelService.editFirstLevel({
-            _id: this.editedItem._id,
-            name: this.editedItem.name
+          const editing = await LevelService.editFirstLevel({
+            _id: this.editinglevel._id,
+            name: this.editinglevel.name
           })
-          if (edited) {
-            Object.assign(this.firstLevels[this.editedIndex], this.editedItem)
+          if (editing) {
+            Object.assign(this.firstLevels[this.editingIndex], this.editinglevel)
             this.close()
           } else {
             this.dialogError = 'Modification non prise en compte.'
@@ -388,7 +343,7 @@ export default {
       } else {
         try {
           const res = await LevelService.createFirstLevel({
-            name: this.editedItem.name
+            name: this.editinglevel.name
           })
           if (res.data.firstLevel.name) {
             this.firstLevels.push(res.data.firstLevel)
@@ -402,15 +357,22 @@ export default {
         }
       }
     },
+    editSecondLevel (level) {
+      this.currentFL = this.firstLevels.find(x => x.secondLevels.find(x => x._id === level._id))
+      this.editingIndex = this.currentFL.secondLevels.indexOf(level)
+      this.editinglevel = Object.assign({}, level)
+      this.level = 'secondLevel'
+      this.dialog = true
+    },
     async saveSecondLevel () {
-      if (this.editedIndex > -1) {
+      if (this.editingIndex > -1) {
         try {
-          const edited = await LevelService.editSecondLevel({
-            _id: this.editedItem._id,
-            name: this.editedItem.name
+          const editing = await LevelService.editSecondLevel({
+            _id: this.editinglevel._id,
+            name: this.editinglevel.name
           })
-          if (edited) {
-            Object.assign(this.secondLevels[this.editedIndex], this.editedItem)
+          if (editing) {
+            Object.assign(this.currentFL.secondLevels[this.editingIndex], this.editinglevel)
             this.close()
           } else {
             this.dialogError = 'Modification non prise en compte.'
@@ -421,13 +383,13 @@ export default {
       } else {
         try {
           const res = await LevelService.createSecondLevel({
-            name: this.editedItem.name,
+            name: this.editinglevel.name,
             _firstLevel: this.firstLevels[this.activeFL]._id,
-            position: this.position + 1
+            position: this.position
           })
-          if (res.data.level) {
-            this.secondLevels.push(res.data.level)
-            this.firstLevels[this.activeFL].subLevels.splice(this.position + 1, 0, res.data.level._id)
+          if (res.data.firstlevel) {
+            // this.secondLevels.push(res.data.level)
+            this.firstLevels.find(x => x._id === res.data.firstlevel._id).secondLevels = res.data.firstlevel.secondLevels
             this.close()
           } else {
             this.dialogError = 'Modification non prise en compte.'
@@ -437,6 +399,77 @@ export default {
           this.dialogError = 'Impossible de rajouter ce niveau.'
         }
       }
+    },
+    tryDeleteFirstLevel (level) {
+      if(level.secondLevels == 0 || level.secondLevels == undefined){
+        this.deleteFirstLevel(level)
+      } else {
+        this.deletinglevel = level
+        this.deleteFL = true
+      }
+    },
+    async deleteFirstLevel (level) {
+      if(!this.deleteFL) {
+        this.levelIndex = this.firstLevels.indexOf(level)
+        this.editinglevel = Object.assign({}, level)
+        var conf = confirm('Êtes vous sûr de vouloir supprimer ce niveau ?')
+      } else {
+        this.deleteFL = false
+        this.levelIndex = this.firstLevels.indexOf(this.deletinglevel)
+        this.editinglevel = Object.assign({}, this.deletinglevel)
+        var conf = true
+      }
+      if (conf) {
+        try {
+          const deleted = await LevelService.deleteFirstLevel(this.editinglevel._id)
+          if (deleted) {
+            this.firstLevels.splice(this.levelIndex, 1)
+          }
+        } catch (err) {
+          this.error = err.response.data.error
+        }
+
+      }
+    },
+    tryDeleteSecondLevel (level) {
+      // if(level.subLevels == 0){
+        this.deleteSecondLevel(level)
+      // } else {
+        // this.deletinglevel = level
+        // this.deleteSL = true
+      // }
+    },
+    async deleteSecondLevel (level) {
+      if(!this.deleteSL) {
+        var firstLevel = this.firstLevels.find(x => x.secondLevels.find(x => x._id === level._id))
+        this.levelIndex = firstLevel.secondLevels.indexOf(level)
+        // this.editinglevel = Object.assign({}, level)
+        var conf = confirm('Êtes vous sûr de vouloir supprimer ce niveau ?')
+      } else {
+        this.deleteSL = false
+        this.levelIndex = this.secondLevels.indexOf(this.deletinglevel)
+        this.editinglevel = Object.assign({}, this.deletinglevel)
+        var conf = true
+      }
+      if (conf) {
+        try {
+          const deleted = await LevelService.deleteSecondLevel(level._id)
+          console.log(deleted.data)
+          if (deleted) {
+            this.firstLevels.find(x => x._id === deleted.data._id).secondLevels.splice(this.levelIndex, 1)
+          }
+        } catch (error) {
+          this.dialogError = error.response.data.errors
+        }
+      }
+    },
+    close () {
+      this.dialog = false
+      this.dialogError = ''
+      setTimeout(() => {
+        this.editinglevel = Object.assign({}, this.defaultlevel)
+        this.editingIndex = -1
+      }, 300)
     }
   }
 }

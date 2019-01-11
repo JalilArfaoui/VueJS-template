@@ -26,7 +26,7 @@ export default {
         {
           href: '/admincoachs',
           title: 'Gestion des Coachs',
-          icon: 'fas fa-user'
+          icon: 'fa fa-user'
         },
         {
           href: '/admincircuits',
