@@ -22,10 +22,10 @@ export default {
     // this makes a post request to the register endpoint on the express server using the credentials passed
     return Api().post('createSecondLevel', credentials)
   },
-  getSecondLevels (credentials) {
-    // this makes a get request to the register endpoint on the express server using the credentials passed
-    return Api().get('getSecondLevels', credentials)
-  },
+  // getSecondLevels (credentials) {
+  //   // this makes a get request to the register endpoint on the express server using the credentials passed
+  //   return Api().get('getSecondLevels', credentials)
+  // },
   editSecondLevel (credentials) {
     // this makes a put request to the register endpoint on the express server using the credentials passed
     return Api().put('editSecondLevel', credentials)
@@ -33,5 +33,21 @@ export default {
   deleteSecondLevel (clientId) {
     // this makes a put request to the register endpoint on the express server using the credentials passed
     return Api().delete(clientId + '/secondlevel')
+  },
+  createItem (credentials) {
+    // this makes a post request to the register endpoint on the express server using the credentials passed
+    return Api().post('createItem', credentials)
+  },
+  // getItems (credentials) {
+  //   // this makes a get request to the register endpoint on the express server using the credentials passed
+  //   return Api().get('getItems', credentials)
+  // },
+  editItem (credentials) {
+    // this makes a put request to the register endpoint on the express server using the credentials passed
+    return Api().put('editItem', credentials)
+  },
+  deleteItem (clientId) {
+    // this makes a put request to the register endpoint on the express server using the credentials passed
+    return Api().delete(clientId + '/item')
   }
 }

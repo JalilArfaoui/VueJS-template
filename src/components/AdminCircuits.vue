@@ -31,9 +31,20 @@
                 <v-flex xs12 sm10>
                   <v-text-field
                     v-if=""
-                    v-model="editinglevel.name"
+                    v-model="editing.name"
                     label="Nom du niveau">
                   </v-text-field>
+                  <v-select
+                    v-if="this.level === 'itemCreation'"
+                    v-model="editing.type"
+                    :items="itemTypes"
+                    item-text="state"
+                    item-value="abbr"
+                    label="Type d'item"
+                    persistent-hint
+                    return-object
+                    single-line
+                  ></v-select>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -54,6 +65,7 @@
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" flat @click="close">Annuler</v-btn>
             <v-btn color="blue darken-1" v-if="this.level === 'firstLevel'" flat @click="saveFirstLevel">Valider</v-btn>
+            <v-btn color="blue darken-1" v-else-if="this.level === 'item' || 'itemCreation'" flat @click="saveItem">Valider</v-btn>
             <v-btn color="blue darken-1" v-else flat @click="saveSecondLevel">Valider</v-btn>
           </v-card-actions>
         </v-card>
@@ -98,6 +110,7 @@
       <v-tab-item
         v-for="(firstLevel, index) in firstLevels"
         :key="index"
+
       >
       <v-btn
         color="blue"
@@ -109,15 +122,15 @@
       >
         <v-icon>add</v-icon>
       </v-btn>
-        <!-- <v-card flat -->
-        <v-toolbar
+      <div
+        v-for="(secondLevel, indexSL) in firstLevel.secondLevels"
+        :key="indexSL"
+      >
+        <v-toolbar flat
           color="pink"
           dark
-          v-for="(secondLevel, index) in firstLevel.secondLevels"
-          :key="secondLevel._id"
         >
-
-          <v-toolbar-title>{{secondLevel}}</v-toolbar-title>
+          <v-toolbar-title>{{secondLevel.name}}</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon
           @click="editSecondLevel(secondLevel)"
@@ -130,29 +143,81 @@
             <v-icon>delete</v-icon>
           </v-btn>
         </v-toolbar>
+        <v-card>
+            <v-container
+              fluid
+              grid-list-lg
+            >
+              <v-layout row wrap>
+                <v-flex xs12
+                  v-for="(item, indexItem) in secondLevel.items"
+                  :key="indexItem"
+                >
+                <v-btn
+                  color="pink"
+                  dark
+                  small
+                  centered
+                  fab
+                  @click="level = 'itemCreation', currentSL = secondLevel, dialog = true,  positionItem = indexItem"
+                >
+                  <v-icon>add</v-icon>
+                </v-btn>
+                  <v-card
+                    v-bind:class="item.type"
+                    class="white--text"
+                  >
+                    <v-card-title primary-title>
+                      <div>
+                        <span>{{item.type}}</span>
+                        <div class="headline">{{item.name}}</div>
+                      </div>
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        icon
+                        dark
+                        @click="editItem(item)"
+                      >
+                        <v-icon>edit</v-icon>
+                      </v-btn>
+                      <v-btn
+                        icon
+                        dark
+                        @click="deleteItem(item)"
+                      >
+                        <v-icon>delete</v-icon>
+                      </v-btn>
+                    </v-card-title>
+                  </v-card>
+                </v-flex>
+                <v-btn
+                  color="pink"
+                  dark
+                  small
+                  centered
+                  fab
+                  @click="level = 'itemCreation', currentSL = secondLevel, dialog = true, positionItem = indexItem + 1 "
+                >
+                  <v-icon>add</v-icon>
+                </v-btn>
 
-        <!-- <v-card>
-          <v-container
-            fluid
-            grid-list-lg
+              </v-layout>
+            </v-container>
+          </v-card>
+          <v-btn
+            color="blue"
+            dark
+            small
+            centered
+            fab
+            @click="level = 'secondLevel', dialog = true, position = indexSL + 1 "
           >
-            <v-layout row wrap>
-              <v-flex xs12
-                v-for="(item, index) in secondLevel.items"
-                :key="item"
-              >
-                <v-card color="blue-grey darken-2" class="white--text">
-                  <v-card-title primary-title>
-                    <div>
-                      <div class="headline">{{getItemById(itemId)}}</div>
-                    </div>
-                  </v-card-title>
-                </v-card>
-              </v-flex>
+            <v-icon>add</v-icon>
+          </v-btn>
+        </div>
 
-            </v-layout>
-          </v-container>
-        </v-card> -->
+
+
            <!-- <v-container
             fluid
             grid-list-lg
@@ -188,16 +253,7 @@
               </v-flex>
             </v-layout>
           </v-container> -->
-          <v-btn
-            color="blue"
-            dark
-            small
-            centered
-            fab
-            @click="level = 'secondLevel', dialog = true, position = index"
-          >
-            <v-icon>add</v-icon>
-          </v-btn>
+
         <!-- </v-card> -->
 
       </v-tab-item>
@@ -248,7 +304,7 @@
 /* eslint-disable no-useless-escape */
 import AdminNav from './AdminNav'
 import LevelService from '../services/LevelService'
-import ItemService from '../services/ItemService'
+// import ItemService from '../services/ItemService'
 
 export default {
   components: {
@@ -274,13 +330,15 @@ export default {
       currentSL: {},
       currentItem: {},
       position: 0,
+      positionItem: 0,
       editingIndex: -1,
-      editinglevel: {
+      editing: {
         name: ''
       },
       defaultlevel: {
         name: ''
-      }
+      },
+      itemTypes: ['Audio Guide', 'Audio Coach', 'Enregistrement Audio', 'Enregistrement Video', 'Lecture Audio', 'Lecture Video', 'Texte Liant', 'Texte Commentaire', 'Test Questionnaire', 'Texte Exercice', 'Photos Exercice', 'Texte Notes', 'Video Coach']
     }
   },
   computed: {
@@ -320,7 +378,7 @@ export default {
     },
     editFirstLevel (level) {
       this.editingIndex = this.firstLevels.indexOf(level)
-      this.editinglevel = Object.assign({}, level)
+      this.editing = Object.assign({}, level)
       this.level = 'firstLevel'
       this.dialog = true
     },
@@ -328,11 +386,11 @@ export default {
       if (this.editingIndex > -1) {
         try {
           const editing = await LevelService.editFirstLevel({
-            _id: this.editinglevel._id,
-            name: this.editinglevel.name
+            _id: this.editing._id,
+            name: this.editing.name
           })
           if (editing) {
-            Object.assign(this.firstLevels[this.editingIndex], this.editinglevel)
+            Object.assign(this.firstLevels[this.editingIndex], this.editing)
             this.close()
           } else {
             this.dialogError = 'Modification non prise en compte.'
@@ -343,7 +401,7 @@ export default {
       } else {
         try {
           const res = await LevelService.createFirstLevel({
-            name: this.editinglevel.name
+            name: this.editing.name
           })
           if (res.data.firstLevel.name) {
             this.firstLevels.push(res.data.firstLevel)
@@ -360,7 +418,7 @@ export default {
     editSecondLevel (level) {
       this.currentFL = this.firstLevels.find(x => x.secondLevels.find(x => x._id === level._id))
       this.editingIndex = this.currentFL.secondLevels.indexOf(level)
-      this.editinglevel = Object.assign({}, level)
+      this.editing = Object.assign({}, level)
       this.level = 'secondLevel'
       this.dialog = true
     },
@@ -368,11 +426,11 @@ export default {
       if (this.editingIndex > -1) {
         try {
           const editing = await LevelService.editSecondLevel({
-            _id: this.editinglevel._id,
-            name: this.editinglevel.name
+            _id: this.editing._id,
+            name: this.editing.name
           })
           if (editing) {
-            Object.assign(this.currentFL.secondLevels[this.editingIndex], this.editinglevel)
+            Object.assign(this.currentFL.secondLevels[this.editingIndex], this.editing)
             this.close()
           } else {
             this.dialogError = 'Modification non prise en compte.'
@@ -383,9 +441,54 @@ export default {
       } else {
         try {
           const res = await LevelService.createSecondLevel({
-            name: this.editinglevel.name,
+            name: this.editing.name,
             _firstLevel: this.firstLevels[this.activeFL]._id,
             position: this.position
+          })
+          if (res.data.firstlevel) {
+            // this.secondLevels.push(res.data.level)
+            this.firstLevels.find(x => x._id === res.data.firstlevel._id).secondLevels = res.data.firstlevel.secondLevels
+            this.close()
+          } else {
+            this.dialogError = 'Modification non prise en compte.'
+          }
+        } catch (error) {
+          // this.dialogError = error.response.data.errors
+          this.dialogError = 'Impossible de rajouter ce niveau.'
+        }
+      }
+    },
+    editItem (item) {
+      this.currentFL = this.firstLevels.find(x => x.secondLevels.find(x => x.items.find(x => x._id === item._id)))
+      this.currentSL = this.currentFL.secondLevels.find(x => x.items.find(x => x._id === item._id))
+      this.editingIndex = this.currentSL.items.indexOf(item)
+      this.editing = Object.assign({}, item)
+      this.level = 'item'
+      this.dialog = true
+    },
+    async saveItem () {
+      if (this.editingIndex > -1) {
+        try {
+          const editing = await LevelService.editItem({
+            _id: this.editing._id,
+            name: this.editing.name
+          })
+          if (editing) {
+            Object.assign(this.currentSL.items[this.editingIndex], this.editing)
+            this.close()
+          } else {
+            this.dialogError = 'Modification non prise en compte.'
+          }
+        } catch (e) {
+          this.dialogError = 'Modification non prise en compte.'
+        }
+      } else {
+        try {
+          const res = await LevelService.createItem({
+            name: this.editing.name,
+            type: this.editing.type,
+            _secondLevel: this.currentSL._id,
+            position: this.positionItem
           })
           if (res.data.firstlevel) {
             // this.secondLevels.push(res.data.level)
@@ -432,12 +535,12 @@ export default {
       }
     },
     tryDeleteSecondLevel (level) {
-      // if(level.subLevels == 0){
+      if(level.items == 0){
         this.deleteSecondLevel(level)
-      // } else {
-        // this.deletinglevel = level
-        // this.deleteSL = true
-      // }
+      } else {
+        this.deletinglevel = level
+        this.deleteSL = true
+      }
     },
     async deleteSecondLevel (level) {
       if(!this.deleteSL) {
@@ -454,9 +557,21 @@ export default {
       if (conf) {
         try {
           const deleted = await LevelService.deleteSecondLevel(level._id)
-          console.log(deleted.data)
           if (deleted) {
             this.firstLevels.find(x => x._id === deleted.data._id).secondLevels.splice(this.levelIndex, 1)
+          }
+        } catch (error) {
+          this.dialogError = error.response.data.errors
+        }
+      }
+    },
+    async deleteItem (item) {
+      var conf = confirm('Êtes vous sûr de vouloir supprimer cet item ?')
+      if (conf) {
+        try {
+          const deleted = await LevelService.deleteItem(item._id)
+          if (deleted) {
+            this.firstLevels.find(x => x._id === deleted.data._id).secondLevels = deleted.data.secondLevels
           }
         } catch (error) {
           this.dialogError = error.response.data.errors
@@ -481,5 +596,45 @@ export default {
 }
 .v-sidebar-menu.collapsed ~ #admin-layout{
   padding-left: calc(50px + 1%);
+}
+
+.Audio.Guide{
+  background-color: #80DEEA !important;
+}
+.Audio.Enregistrement{
+  background-color: #0097A7 !important;
+}
+.Audio.Lecture{
+  background-color: #26C6DA !important;
+}
+.Audio.Coach{
+  background-color: #84FFFF !important;
+}
+.Video.Enregistrement{
+  background-color: #1976D2 !important;
+}
+.Video.Lecture{
+  background-color: #42A5F5 !important;
+}
+.Video.Coach{
+  background-color: #82B1FF !important;
+}
+.Texte.Liant{
+  background-color: #A1887F !important;
+}
+.Texte.Commentaire{
+  background-color: #8D6E63 !important;
+}
+.Texte.Exercice{
+  background-color: #6D4C41 !important;
+}
+.Texte.Notes{
+  background-color: #D7CCC8 !important;
+}
+.Photos.Exercice{
+  background-color: #FFD54F !important;
+}
+.Test.Questionnaire{
+  background-color: #AB47BC !important;
 }
 </style>
