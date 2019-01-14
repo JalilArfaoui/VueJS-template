@@ -149,20 +149,21 @@
               grid-list-lg
             >
               <v-layout row wrap>
-                <v-flex xs12
-                  v-for="(item, indexItem) in secondLevel.items"
-                  :key="indexItem"
-                >
                 <v-btn
                   color="pink"
                   dark
                   small
                   centered
                   fab
-                  @click="level = 'itemCreation', currentSL = secondLevel, dialog = true,  positionItem = indexItem"
+                  @click="level = 'itemCreation', currentSL = secondLevel, dialog = true,  positionItem = 0"
                 >
                   <v-icon>add</v-icon>
                 </v-btn>
+                <v-flex xs12
+                  v-for="(item, indexItem) in secondLevel.items"
+                  :key="indexItem"
+                >
+
                   <v-card
                     v-bind:class="item.type"
                     class="white--text"
@@ -189,17 +190,18 @@
                       </v-btn>
                     </v-card-title>
                   </v-card>
+                  <v-btn
+                    color="pink"
+                    dark
+                    small
+                    centered
+                    fab
+                    @click="level = 'itemCreation', currentSL = secondLevel, dialog = true, positionItem = indexItem + 1 "
+                  >
+                    <v-icon>add</v-icon>
+                  </v-btn>
                 </v-flex>
-                <v-btn
-                  color="pink"
-                  dark
-                  small
-                  centered
-                  fab
-                  @click="level = 'itemCreation', currentSL = secondLevel, dialog = true, positionItem = indexItem + 1 "
-                >
-                  <v-icon>add</v-icon>
-                </v-btn>
+
 
               </v-layout>
             </v-container>
@@ -269,7 +271,7 @@
     >
     {{error}}
   </v-alert>
-  <v-dialog v-model="deleteFL" max-width="500px">
+  <v-dialog v-model="deleteWarning" max-width="500px">
     <v-card>
       <v-card-title>
         <span class="headline">Suppresion d'un niveau avec dépendances</span>
@@ -286,12 +288,22 @@
           >
           Vous vous apprétez à supprimer un niveau qui contient des sous-niveaux. Si vous poursuivez, tous ces sous-niveaux seront également supprimé.
         </v-alert>
+        <v-alert
+          v-if='deleteSL'
+          :value="deleteSL"
+          type="error"
+          icon="warning"
+          color="error"
+          outline
+          >
+          Vous vous apprétez à supprimer un sous-niveau qui contient des items. Si vous poursuivez, tous ces items seront également supprimé.
+        </v-alert>
       </v-card-text>
 
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="blue darken-1" flat @click="close">Annuler</v-btn>
-        <v-btn color="red darken-1" v-if="this.level === 'firstLevel'" flat @click="deleteFirstLevel">Supprimer</v-btn>
+        <v-btn color="red darken-1" v-if="this.deleteFL" flat @click="deleteFirstLevel">Supprimer</v-btn>
         <v-btn color="red darken-1" v-else flat @click="deleteSecondLevel">Supprimer</v-btn>
       </v-card-actions>
     </v-card>
@@ -317,6 +329,7 @@ export default {
       dialog: false,
       error: '',
       dialogError: '',
+      deleteWarning: false,
       deleteFL: false,
       deleteSL: false,
       deletinglevel: {},
@@ -508,6 +521,7 @@ export default {
         this.deleteFirstLevel(level)
       } else {
         this.deletinglevel = level
+        this.deleteWarning = true
         this.deleteFL = true
       }
     },
@@ -518,6 +532,7 @@ export default {
         var conf = confirm('Êtes vous sûr de vouloir supprimer ce niveau ?')
       } else {
         this.deleteFL = false
+        this.deleteWarning = false
         this.levelIndex = this.firstLevels.indexOf(this.deletinglevel)
         this.editinglevel = Object.assign({}, this.deletinglevel)
         var conf = true
@@ -539,6 +554,7 @@ export default {
         this.deleteSecondLevel(level)
       } else {
         this.deletinglevel = level
+        this.deleteWarning = true
         this.deleteSL = true
       }
     },
@@ -546,17 +562,18 @@ export default {
       if(!this.deleteSL) {
         var firstLevel = this.firstLevels.find(x => x.secondLevels.find(x => x._id === level._id))
         this.levelIndex = firstLevel.secondLevels.indexOf(level)
-        // this.editinglevel = Object.assign({}, level)
-        var conf = confirm('Êtes vous sûr de vouloir supprimer ce niveau ?')
+        this.editinglevel = Object.assign({}, level)
+        var conf = confirm('Êtes vous sûr de vouloir supprimer ce sous-niveau ?')
       } else {
         this.deleteSL = false
+        this.deleteWarning = false
         this.levelIndex = this.secondLevels.indexOf(this.deletinglevel)
         this.editinglevel = Object.assign({}, this.deletinglevel)
         var conf = true
       }
       if (conf) {
         try {
-          const deleted = await LevelService.deleteSecondLevel(level._id)
+          const deleted = await LevelService.deleteSecondLevel(this.editinglevel._id)
           if (deleted) {
             this.firstLevels.find(x => x._id === deleted.data._id).secondLevels.splice(this.levelIndex, 1)
           }
@@ -580,6 +597,8 @@ export default {
     },
     close () {
       this.dialog = false
+      this.deleteFL = false
+      this.deleteSL = false
       this.dialogError = ''
       setTimeout(() => {
         this.editinglevel = Object.assign({}, this.defaultlevel)

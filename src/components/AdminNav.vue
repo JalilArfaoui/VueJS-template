@@ -4,6 +4,7 @@
 
 <script>
 import { SidebarMenu } from 'vue-sidebar-menu'
+import '@fortawesome/fontawesome-free/css/all.css'
 import 'vue-sidebar-menu/dist/vue-sidebar-menu.css'
 
 export default {
@@ -21,22 +22,22 @@ export default {
         {
           href: '/adminclients',
           title: 'Gestion des clients',
-          icon: 'fas fa-minus'
+          icon: 'fas fa-users'
         },
         {
           href: '/admincoachs',
           title: 'Gestion des Coachs',
-          icon: 'fa fa-user'
+          icon: 'fas fa-user-astronaut'
         },
         {
           href: '/admincircuits',
           title: 'Gestion des circuits',
-          icon: 'fas fa-igloo'
+          icon: 'fas fa-route'
         },
         {
           href: '/administration',
           title: 'Administration',
-          icon: '<v-icon small> delete </v-icon>'
+          icon: 'fas fa-gopuram'
         }
       ],
       collapsed: true,
