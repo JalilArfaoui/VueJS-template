@@ -1,7 +1,7 @@
-<template> <!-- https://medium.freecodecamp.org/how-to-build-a-flexible-image-uploader-component-using-vue-js-2-0-5ee7fc77516 -->
+<template> <!-- https://medium.freecodecamp.org/how-to-build-a-flexible-media-uploader-component-using-vue-js-2-0-5ee7fc77516 -->
   <div>
     <div @click="launchFilePicker()">
-      <slot name="imageUpload"></slot>
+      <slot name="mediaUpload"></slot>
     </div>
     <input type="file"
        ref="file"
@@ -26,47 +26,44 @@
 
 <script>
   export default {
-    name: 'image-input',
+    name: 'file-input',
     data: ()=> ({
       errorDialog: null,
       errorText: '',
       uploadFieldName: 'file',
-      maxSize: 1024
+      maxSize: 300000
     }),
     props: {
       // Use "value" here to enable compatibility with v-model
-      value: String,
+      value: Object,
     },
     methods: {
       launchFilePicker(){
         this.$refs.file.click();
       },
       onFileChange(fieldName, file) {
-        console.log('FieldName: ' + fieldName);
-        console.log('File: ' + file);
         const { maxSize } = this
-        let imageFile = file[0]
-        console.log(imageFile);
+        let mediaFile = file[0]
 
         //check if user actually selected a file
         if (file.length>0) {
-          let size = imageFile.size / maxSize / maxSize
-          if (!imageFile.type.match('image.*')) {
-            // check whether the upload is an image
+          let size = mediaFile.size / maxSize / maxSize
+          if (!mediaFile.type.match('audio/*') && !mediaFile.type.match('video/*')) {
+            // check whether the upload is an media
             this.errorDialog = true
-            this.errorText = 'Ce fichier n\'est pas une image'
+            this.errorText = 'Ce fichier n\'est pas un media'
           } else if (size>1) {
             // check whether the size is greater than the size limit
             this.errorDialog = true
-            this.errorText = 'Fichier trop volumineux, choisir un fichier inférieur à 1MB'
+            this.errorText = 'Fichier trop volumineux, choisir un fichier inférieur à 300MB'
           } else {
-            // Append file into FormData & turn file into image URL
+            // Append file into FormData & turn file into media URL
             let formData = new FormData()
-            let imageURL = URL.createObjectURL(imageFile)
-            // formData.append(fieldName, imageFile)
-            formData.append('image', imageFile)
-            // Emit FormData & image URL to the parent component
-            this.$emit('input', { formData, imageURL })
+            let mediaURL = URL.createObjectURL(mediaFile)
+            // formData.append(fieldName, mediaFile)
+            formData.append('media', mediaFile)
+            // Emit FormData & media URL to the parent component
+            this.$emit('input', { formData, mediaURL })
           }
         }
       }

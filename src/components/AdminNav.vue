@@ -35,6 +35,11 @@ export default {
           icon: 'fas fa-route'
         },
         {
+          href: '/adminmedias',
+          title: 'Gestion des médias',
+          icon: 'fas fa-film'
+        },
+        {
           href: '/administration',
           title: 'Administration',
           icon: 'fas fa-gopuram'

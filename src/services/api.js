@@ -5,7 +5,7 @@ export default () => {
   var token = store.state.token
   return axios.create({
     baseURL: process.env.VUE_APP_SERVER_PORT,
-    timeout: 3000,
+    timeout: 30000, // usually 3sec but as admins can upload video, extend it to 30sec
     headers: { 'x-auth': token }
   })
 }

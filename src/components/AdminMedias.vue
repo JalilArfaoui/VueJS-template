@@ -3,7 +3,7 @@
     <AdminNav />
     <v-layout id="admin-layout" justify-space-around column>
       <v-toolbar flat color="white">
-        <v-toolbar-title>Liste des coachs</v-toolbar-title>
+        <v-toolbar-title>Liste des médias</v-toolbar-title>
         <v-divider
         class="mx-2"
         inset
@@ -11,7 +11,7 @@
         ></v-divider>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
-          <v-btn slot="activator" color="primary" dark class="mb-2">Ajouter un coach</v-btn>
+          <v-btn slot="activator" color="primary" dark class="mb-2">Ajouter un média</v-btn>
           <v-card>
             <v-card-title>
               <span class="headline">{{ formTitle }}</span>
@@ -20,42 +20,35 @@
               <v-container grid-list-md>
                 <v-layout wrap>
                   <v-flex xs12 sm10>
-                    <image-input v-model="editedItem.profilPicture">
-                      <div slot="imageUpload" class="text-md-center">
-                        <v-avatar size="150px" v-ripple v-if="!editedItem.profilPicture" class="grey lighten-3 mb-3 btn">
-                          <span>Insérer une photo carré inférieure à 1MB</span>
+                    <file-input v-model="editedItem.link">
+                      <div slot="mediaUpload" class="text-md-center">
+                        <v-avatar size="150px" v-ripple v-if="!editedItem.link" class="grey lighten-3 mb-3 btn">
+                          <span>Insérer un media audio ou vidéo inférieur à 300MB</span>
                         </v-avatar>
-                        <v-avatar size="150px" v-ripple v-else-if="editedItem.profilPicture.imageURL" class="mb-3">
-                          <img :src="editedItem.profilPicture.imageURL" alt="avatar">
+                        <v-avatar size="150px" v-ripple v-else-if="editedItem.link.mediaURL" class="mb-3">
+                          <img :src="editedItem.link.mediaURL" alt="media">
                         </v-avatar>
                         <v-avatar size="150px" v-ripple v-else class="mb-3">
-                          <img :src="editedItem.profilPicture" alt="avatar">
+                          <img :src="editedItem.link" alt="media">
                         </v-avatar>
                       </div>
-                    </image-input>
+                    </file-input>
                     <v-text-field
                       v-if=""
-                      v-model="editedItem.firstName"
-                      label="Prénom">
-                    </v-text-field>
-                    <v-text-field
-                      v-if=""
-                      v-model="editedItem.lastName"
+                      v-model="editedItem.name"
                       label="Nom">
                     </v-text-field>
-                    <v-text-field
+                    <v-select
                       v-if=""
-                      v-model="editedItem.email"
-                      label="E-mail">
-                    </v-text-field>
-                    <v-textarea
-                      v-if=""
-                      v-model="editedItem.description"
-                      label="Description"
-                      counter="500"
-                      flat
-                      single-line>
-                    </v-textarea>
+                      v-model="editedItem.type"
+                      :items="types"
+                      item-text="state"
+                      item-value="abbr"
+                      label="Type de media"
+                      persistent-hint
+                      return-object
+                      single-line
+                    ></v-select>
                   </v-flex>
                 </v-layout>
               </v-container>
@@ -82,19 +75,18 @@
 
     <v-data-table
       :headers="headers"
-      :items="coachs"
+      :items="medias"
       :pagination.sync="pagination"
       class="elevation-1">
       <template slot="pageText" slot-scope="props" pageStop="20">
-        Coachs {{ props.pageStart }} à {{ props.pageStop }} sur {{ props.itemsLength }}
+        Medias {{ props.pageStart }} à {{ props.pageStop }} sur {{ props.itemsLength }}
       </template>
       <template slot="items" slot-scope="props">
         <td>{{ props.index + 1 }}</td>
-        <td><img :src="props.item.profilPicture" class="profilPicture"></td>  <!-- use vuetify avatar -->
-        <td>{{ props.item.firstName }}</td>
-        <td>{{ props.item.lastName }}</td>
-        <td>{{ props.item.email }}</td>
-        <td>{{ props.item.description.substring(0,40) + '...' }}</td>
+        <td>{{ props.item.name }}</td>
+        <td>{{ props.item.link }}</td>
+        <td>{{ props.item.type }}</td>
+        <td>{{ props.item.updatedAt}}</td>
         <td class="layout align-center justify-space-around">
           <v-icon
             small
@@ -131,13 +123,14 @@
 /* eslint-disable no-useless-escape */
 import AdminNav from './AdminNav'
 import AdminService from '../services/AdminService'
+import mediaUpload from './mediaUpload'
 import imageUpload from './imageUpload'
 
 export default {
   components: {
     // Panel,
     AdminNav,
-    ImageInput: imageUpload
+    FileInput: mediaUpload
   },
   data () {
     return {
@@ -145,14 +138,13 @@ export default {
       dialog: false,
       error: '',
       dialogError: '',
-      coachs: [],
+      medias: [],
       headers: [
         { text: '#', value: 'index' },
-        { text: 'Profil', value: 'profilPicture' },
-        { text: 'Prénom', value: 'firstName' },
-        { text: 'Nom', value: 'lastName' },
-        { text: 'E-mail', value: 'email' },
-        { text: 'Description', value: 'description' },
+        { text: 'Nom', value: 'name' },
+        { text: 'Lien', value: 'link' },
+        { text: 'Type', value: 'type' },
+        { text: 'Date', value: 'updatedAt' },
         { text: 'Actions', value: 'name', sortable: false }
       ],
       pagination: {
@@ -160,27 +152,23 @@ export default {
       },
       editedIndex: -1,
       editedItem: {
-        firstName: '',
-        lastName: '',
-        email: '',
-        description: '',
-        profilPicture: null
+        name: '',
+        type: '',
+        media: null
       },
       defaultItem: {
-        firstName: '',
-        lastName: '',
-        email: '',
-        description: '',
-        profilPicture: null
+        name: '',
+        type: '',
+        media: null
       },
-      avatarUrl: 'https://talkiteasy-dev-avatar.s3.eu-west-3.amazonaws.com/1546609162262',
       saving: false,
-      saved: false
+      saved: false,
+      types: ['Audio Guide', 'Audio Coach', 'Enregistrement Audio', 'Enregistrement Video', 'Lecture Audio', 'Lecture Video', 'Photos Exercice', 'Video Coach']
     }
   },
   computed: {
     formTitle () {
-      return this.editedIndex === -1 ? 'Nouveau coach' : 'Modifier le coach'
+      return this.editedIndex === -1 ? 'Nouveau media' : 'Modifier le media'
     }
   },
   watch: {
@@ -195,7 +183,7 @@ export default {
     }
   },
   created () {
-    this.getCoachs()
+    this.getMedias()
   },
   mounted () {
     if (localStorage.name) {
@@ -206,32 +194,33 @@ export default {
     }
   },
   methods: {
-    async getCoachs () {
+    async getMedias () {
       try {
-        const coachs = await AdminService.getCoachs()
-        this.coachs = Object.keys(coachs.data).map((key) => {
-          return coachs.data[key]
+        const medias = await AdminService.getMedias()
+        this.medias = Object.keys(medias.data).map((key) => {
+          return medias.data[key]
         })
+        this.medias.forEach( media => media.updatedAt = new Date(media.updatedAt).toLocaleDateString("fr-FR"))
       } catch (e) {
         this.error = e.response.data.error
       }
     },
 
     editItem (item) {
-      this.editedIndex = this.coachs.indexOf(item)
+      this.editedIndex = this.medias.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
 
     async deleteItem (item) {
-      const index = this.coachs.indexOf(item)
+      const index = this.medias.indexOf(item)
       this.editedItem = Object.assign({}, item)
-      var conf = confirm('Êtes vous sûr de vouloir supprimer ce coach ?')
+      var conf = confirm('Êtes vous sûr de vouloir supprimer ce media ?')
       if (conf) {
         try {
-          const deleted = await AdminService.deleteCoach(this.editedItem._id)
+          const deleted = await AdminService.deleteMedia(this.editedItem._id)
           if (deleted) {
-            this.coachs.splice(index, 1)
+            this.medias.splice(index, 1)
           }
         } catch (e) {
           this.error = e.response.data.error
@@ -249,23 +238,26 @@ export default {
     },
 
     async save () {
-      // if (typeof this.editedItem.profilPicture !== 'undefined') {
-      if (this.editedItem.profilPicture !== null) {
-        this.avatarUrl = await this.uploadImage()
+      // if (this.editedItem.link != null) {
+      if (typeof this.editedItem.link !== 'undefined' && typeof this.editedItem.link.mediaURL !== 'undefined' && this.editedItem.name != "" && this.editedItem.type != "") {
+        this.editedItem.link = await this.uploadMedia()
       }
-      if (this.editedIndex > -1) { // Edit coach case
+      // } else {
+      //   this.mediaUrl = this.editedItem.link
+      // }
+      if (this.editedIndex > -1) { // Edit media case
         try {
-          const edited = await AdminService.editCoach({
+          console.log(this.editedItem);
+          const edited = await AdminService.editMedia({
             _id: this.editedItem._id,
-            firstName: this.editedItem.firstName,
-            lastName: this.editedItem.lastName,
-            email: this.editedItem.email,
-            description: this.editedItem.description,
-            profilPicture: this.avatarUrl
+            name: this.editedItem.name,
+            type: this.editedItem.type,
+            link: this.editedItem.link
           })
           if (edited) {
-            this.editedItem.profilPicture = this.avatarUrl
-            Object.assign(this.coachs[this.editedIndex], this.editedItem)
+            console.log(edited.data);
+            // this.editedItem.link = this.avatarUrl
+            Object.assign(this.medias[this.editedIndex], this.editedItem)
             this.close()
           } else {
             this.dialogError = 'Modification non prise en compte'
@@ -274,40 +266,39 @@ export default {
           this.dialogError = e.response.data
           // this.dialogError = 'Modification non prise en compte. Il est possible que ce nom existe déjà'
         }
-      } else { // New coach case
+      } else { // New media case
         try {
-          const res = await AdminService.createCoach({
-            firstName: this.editedItem.firstName,
-            lastName: this.editedItem.lastName,
-            email: this.editedItem.email,
-            description: this.editedItem.description,
-            profilPicture: this.avatarUrl
+          const res = await AdminService.createMedia({
+            name: this.editedItem.name,
+            type: this.editedItem.type,
+            link: this.editedItem.link
           })
-          if (res.data.coach.email) {
-            this.editedItem.profilPicture = this.avatarUrl
-            this.coachs.push(this.editedItem)
+          if (res.data.media) {
+            // this.editedItem.link = this.mediaUrl
+            this.editedItem.updatedAt = new Date(res.data.media.updatedAt).toLocaleDateString("fr-FR")
+            this.medias.push(this.editedItem)
             this.close()
           } else {
             this.dialogError = 'Modification non prise en compte'
           }
         } catch (error) {
-          // this.dialogError = error.response.data
-          this.dialogError = 'Impossible de rajouter ce coach. Vérifier que vous avez rempli les champs Prénom, Nom et E-mail. Si c\'est le cas, il est probable qu\'il existe déjà.'
+          // this.dialogError = error.response.data.errors
+          this.dialogError = 'Impossible de rajouter ce media. Vérifier que vous avez bien ajouté un media de type audio ou vidéo et que les champs Nom et Type de media sont bien remplis.'
         }
       }
     },
-    async uploadImage() {
+    async uploadMedia() {
       this.saving = true
-      console.log(this.editedItem.profilPicture);
       try {
-        const avatarUrl = await AdminService.avatarUpload(this.editedItem.profilPicture.formData)
-        this.savedAvatar()
-        return avatarUrl.data.imageUrl
+        const mediaUrl = await AdminService.mediaUpload(this.editedItem.link.formData)
+        this.savedMedia()
+        return mediaUrl.data
       } catch (error) {
-        this.dialogError = error.response.data.errors
+        this.dialogError = error.response.data
+        throw error
       }
     },
-    savedAvatar() {
+    savedMedia() {
       this.saving = false
       this.saved = true
     }
@@ -322,7 +313,7 @@ export default {
 .v-sidebar-menu.collapsed ~ #admin-layout{
   padding-left: calc(50px + 1%);
 }
-.profilPicture{
+.media{
   border-radius: 30px;
   height: 30px;
   width: 30px;
