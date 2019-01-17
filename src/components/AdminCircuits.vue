@@ -503,6 +503,8 @@ export default {
             _secondLevel: this.currentSL._id,
             position: this.positionItem
           })
+          console.log(res.data.firstlevel);
+
           if (res.data.firstlevel) {
             // this.secondLevels.push(res.data.level)
             this.firstLevels.find(x => x._id === res.data.firstlevel._id).secondLevels = res.data.firstlevel.secondLevels

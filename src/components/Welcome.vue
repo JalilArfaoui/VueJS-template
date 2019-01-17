@@ -182,7 +182,6 @@ export default {
             email: this.email
           })
           if (response) {
-            console.log(response);
             this.$store.dispatch('setToken', response.data.token)
             this.$store.dispatch('setUser', response.data.user)
 
@@ -191,7 +190,7 @@ export default {
               this.$store.dispatch('setAdmin', response.data.user)
                 .then(() => this.$router.push('/admin'))
             } else {
-              this.$router.push('/dashboard')
+              this.$router.push('/home')
             }
 
           } else {
