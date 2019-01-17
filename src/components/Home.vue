@@ -52,14 +52,17 @@
                     v-for="(item, indexItem) in secondLevel.items"
                     :key="indexItem"
                   >
-                    <v-card
-                      v-bind:class="item.type"
-                      class="white--text"
-                    >
+                    <v-card mt3>
                       <v-card-title primary-title>
                         <div>
-                          <span>{{item.type}}</span>
-                          <div class="headline">{{item.name}}</div>
+                          <div class="headline">{{indexItem}}. {{item.name}}</div>
+                          <div v-if="item.type=='Texte Liant'" class="">{{item.content.field}}</div>
+                          <div v-else-if="item.type=='Lecture Video'" class="">
+                            <VideoPlayer v-bind:activeVideo="item.content.field"></VideoPlayer>
+                          </div>
+                          <div v-else-if="item.type=='Lecture Audio'" class="">
+                            <AudioPlayer v-bind:activeAudio="item.content.field"></AudioPlayer>
+                          </div>
                         </div>
                       </v-card-title>
                     </v-card>
@@ -69,43 +72,6 @@
             </v-card>
           </v-expansion-panel-content>
         </v-expansion-panel>
-          <!-- <div
-            v-for="(secondLevel, indexSL) in firstLevel.secondLevels"
-            :key="indexSL"
-          >
-            <v-toolbar
-              flat
-              color="pink"
-              dark
-            >
-              <v-toolbar-title>{{secondLevel.name}}</v-toolbar-title>
-            </v-toolbar>
-            <v-card>
-              <v-container
-                fluid
-                grid-list-lg
-              >
-                <v-layout row wrap>
-                  <v-flex xs12
-                    v-for="(item, indexItem) in secondLevel.items"
-                    :key="indexItem"
-                  >
-                    <v-card
-                      v-bind:class="item.type"
-                      class="white--text"
-                    >
-                      <v-card-title primary-title>
-                        <div>
-                          <span>{{item.type}}</span>
-                          <div class="headline">{{item.name}}</div>
-                        </div>
-                      </v-card-title>
-                    </v-card>
-                  </v-flex>
-                </v-layout>
-              </v-container>
-            </v-card>
-          </div> -->
         </v-tab-item>
       </v-tabs-items>
     </v-layout>
@@ -115,9 +81,15 @@
 <script>
 /* eslint-disable no-useless-escape */
 import LevelService from '../services/LevelService'
+import VideoPlayer from './videoPlayer'
+import AudioPlayer from './audioPlayer'
 // import ItemService from '../services/ItemService'
 
 export default {
+  components: {
+    VideoPlayer,
+    AudioPlayer
+  },
   data () {
     return {
       name: this.$store.state.user.name,
