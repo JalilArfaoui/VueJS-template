@@ -61,7 +61,7 @@
                 color="error"
                 outline
                 >
-                {{dialogError}}
+                {{dialogError}} Hello
               </v-alert>
             </v-card-text>
           <v-card-actions>
@@ -294,6 +294,7 @@ export default {
         this.savedMedia()
         return mediaUrl.data
       } catch (error) {
+        this.saving = false
         this.dialogError = error.response.data
         throw error
       }

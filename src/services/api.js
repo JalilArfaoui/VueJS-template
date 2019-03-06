@@ -1,21 +1,26 @@
 import axios from 'axios'
 import store from './../store/store.js'
+import NProgress from 'nprogress'
 
 export default () => {
   var token = store.state.token
-  return axios.create({
+  const instance = axios.create({
     baseURL: process.env.VUE_APP_SERVER_PORT,
-    timeout: 30000, // usually 3sec but as admins can upload video, extend it to 30sec
+    timeout: 300000, // usually 3sec but as admins can upload video, extend it to 300sec
     headers: { 'x-auth': token }
   })
-}
 
-// export default {
-//   function (credentials) {
-//     // this makes a post request to the register endpoint on the express server using the credentials passed
-//     return axios.create({
-//         baseURL: process.env.SERVER_PORT,
-//         timeout: 1000,
-//         headers: {'x-auth': store.state.token}
-//       })
-//   }
+  // before a request is made start the nprogress
+  instance.interceptors.request.use(config => {
+    NProgress.start()
+    return config
+  })
+
+  // before a response is returned stop nprogress
+  instance.interceptors.response.use(response => {
+    NProgress.done()
+    return response
+  })
+
+  return instance
+}
