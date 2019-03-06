@@ -8,7 +8,7 @@ export default {
   },
   getFirstLevels (credentials) {
     // this makes a get request to the register endpoint on the express server using the credentials passed
-    return Api().get('getFirstLevels', credentials)
+    return Api().post('getFirstLevels', credentials)
   },
   editFirstLevel (credentials) {
     // this makes a put request to the register endpoint on the express server using the credentials passed
@@ -49,5 +49,9 @@ export default {
   deleteItem (clientId) {
     // this makes a put request to the register endpoint on the express server using the credentials passed
     return Api().delete(clientId + '/item')
+  },
+  getCourseId (credentials) {
+    // this makes a get request to the register endpoint on the express server using the credentials passed
+    return Api().post('getCourseId', credentials)
   }
 }

@@ -30,9 +30,22 @@ export default {
           icon: 'fas fa-user-astronaut'
         },
         {
-          href: '/admincircuits',
           title: 'Gestion des circuits',
-          icon: 'fas fa-route'
+          icon: 'fas fa-route',
+          child: [
+                    {
+                        href: '/AdminParcours1',
+                        title: 'Parcours 1',
+                    },
+                    {
+                        href: '/AdminParcours2',
+                        title: 'Parcours 2',
+                    },
+                    {
+                        href: '/AdminParcours3',
+                        title: 'Parcours 3',
+                    },
+                ]
         },
         {
           href: '/adminmedias',

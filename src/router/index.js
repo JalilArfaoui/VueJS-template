@@ -15,7 +15,9 @@ import AdminDetailsClient from '../components/AdminDetailsClient.vue'
 import AdminUsers from '../components/AdminUsers.vue'
 import AdminCoachs from '../components/AdminCoachs.vue'
 import Administration from '../components/Administration.vue'
-import AdminCircuits from '../components/AdminCircuits.vue'
+import AdminParcours1 from '../components/AdminParcours1.vue'
+import AdminParcours2 from '../components/AdminParcours2.vue'
+import AdminParcours3 from '../components/AdminParcours3.vue'
 import AdminMedias from '../components/AdminMedias.vue'
 
 Vue.use(Router)
@@ -120,9 +122,27 @@ let router = new Router({
       }
     },
     {
-      path: '/admincircuits',
-      name: 'admincircuits',
-      component: AdminCircuits,
+      path: '/adminparcours1',
+      name: 'adminparcours1',
+      component: AdminParcours1,
+      meta: {
+        requiresAuth: true,
+        requiresAdminAuth: true
+      }
+    },
+    {
+      path: '/adminparcours2',
+      name: 'adminparcours2',
+      component: AdminParcours2,
+      meta: {
+        requiresAuth: true,
+        requiresAdminAuth: true
+      }
+    },
+    {
+      path: '/adminparcours3',
+      name: 'adminparcours3',
+      component: AdminParcours3,
       meta: {
         requiresAuth: true,
         requiresAdminAuth: true

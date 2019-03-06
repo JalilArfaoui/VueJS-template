@@ -197,7 +197,6 @@ export default {
             email: this.email,
             password: this.password
           })
-
           // set token and user to true in the store
           this.$store.dispatch('setToken', res.data.token)
           this.$store.dispatch('setUser', res.data.user)

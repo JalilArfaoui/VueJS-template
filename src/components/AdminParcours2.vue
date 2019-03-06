@@ -3,7 +3,7 @@
   <AdminNav />
   <v-layout id="admin-layout" justify-space-around column>
     <v-toolbar flat color="white">
-      <v-toolbar-title>Circuits</v-toolbar-title>
+      <v-toolbar-title>{{this.course.name}}</v-toolbar-title>
       <v-divider
         class="mx-2"
         inset
@@ -326,6 +326,10 @@ export default {
   data () {
     return {
       name: this.$store.state.user.name,
+      course: {
+        id: '',
+        name: 'Parcours 2'
+      },
       dialog: false,
       error: '',
       dialogError: '',
@@ -368,7 +372,7 @@ export default {
     }
   },
   created () {
-    this.getFirstLevels()
+    this.getCourseId()
   },
   mounted () {
     if (localStorage.name) {
@@ -379,9 +383,22 @@ export default {
     }
   },
   methods: {
+    async getCourseId () {
+      try {
+        const res = await LevelService.getCourseId({
+          name: this.course.name
+        })
+        this.course.id = res.data._id
+        this.getFirstLevels()
+      } catch (e) {
+        this.error = e.response
+      }
+    },
     async getFirstLevels () {
       try {
-        const firstLevels = await LevelService.getFirstLevels()
+        const firstLevels = await LevelService.getFirstLevels({
+          _course: this.course.id
+        })
         this.firstLevels = Object.keys(firstLevels.data).map((key) => {
           return firstLevels.data[key]
         })
@@ -414,7 +431,8 @@ export default {
       } else {
         try {
           const res = await LevelService.createFirstLevel({
-            name: this.editing.name
+            name: this.editing.name,
+            _course: this.course.id
           })
           if (res.data.firstLevel.name) {
             this.firstLevels.push(res.data.firstLevel)
@@ -423,8 +441,8 @@ export default {
             this.dialogError = 'Modification non prise en compte.'
           }
         } catch (error) {
-          // this.dialogError = error.response.data.errors
-          this.dialogError = 'Impossible de rajouter ce niveau.'
+          this.dialogError = error.response.data.errors
+          // this.dialogError = 'Impossible de rajouter ce niveau.'
         }
       }
     },
