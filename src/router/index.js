@@ -16,9 +16,9 @@ import AdminDetailsClient from '../components/AdminDetailsClient.vue'
 import AdminUsers from '../components/AdminUsers.vue'
 import AdminCoachs from '../components/AdminCoachs.vue'
 import Administration from '../components/Administration.vue'
-import AdminParcours1 from '../components/AdminParcours1.vue'
-import AdminParcours2 from '../components/AdminParcours2.vue'
-import AdminParcours3 from '../components/AdminParcours3.vue'
+import AdminNiveau1 from '../components/AdminNiveau1.vue'
+import AdminNiveau2 from '../components/AdminNiveau2.vue'
+import AdminNiveau3 from '../components/AdminNiveau3.vue'
 import AdminMedias from '../components/AdminMedias.vue'
 
 Vue.use(Router)
@@ -123,27 +123,27 @@ let router = new Router({
       }
     },
     {
-      path: '/adminparcours1',
-      name: 'adminparcours1',
-      component: AdminParcours1,
+      path: '/adminniveau1',
+      name: 'adminniveau1',
+      component: AdminNiveau1,
       meta: {
         requiresAuth: true,
         requiresAdminAuth: true
       }
     },
     {
-      path: '/adminparcours2',
-      name: 'adminparcours2',
-      component: AdminParcours2,
+      path: '/adminniveau2',
+      name: 'adminniveau2',
+      component: AdminNiveau2,
       meta: {
         requiresAuth: true,
         requiresAdminAuth: true
       }
     },
     {
-      path: '/adminparcours3',
-      name: 'adminparcours3',
-      component: AdminParcours3,
+      path: '/adminniveau3',
+      name: 'adminniveau3',
+      component: AdminNiveau3,
       meta: {
         requiresAuth: true,
         requiresAdminAuth: true

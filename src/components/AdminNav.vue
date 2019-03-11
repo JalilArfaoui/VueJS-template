@@ -34,16 +34,16 @@ export default {
           icon: 'fas fa-route',
           child: [
                     {
-                        href: '/AdminParcours1',
-                        title: 'Parcours 1',
+                        href: '/AdminNiveau1',
+                        title: 'Niveau 1',
                     },
                     {
-                        href: '/AdminParcours2',
-                        title: 'Parcours 2',
+                        href: '/AdminNiveau2',
+                        title: 'Niveau 2',
                     },
                     {
-                        href: '/AdminParcours3',
-                        title: 'Parcours 3',
+                        href: '/AdminNiveau3',
+                        title: 'Niveau 3',
                     },
                 ]
         },

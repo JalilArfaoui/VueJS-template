@@ -326,7 +326,7 @@ export default {
   data () {
     return {
       name: this.$store.state.user.name,
-      course: 'Parcours 1',
+      course: 'Niveau 1',
       dialog: false,
       error: '',
       dialogError: '',

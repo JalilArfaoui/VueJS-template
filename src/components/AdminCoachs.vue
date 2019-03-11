@@ -21,7 +21,7 @@
                 <v-layout wrap>
                   <v-flex xs12 sm10>
                     <image-input v-model="editedItem.profilPicture">
-                      <div slot="imageUpload" class="text-md-center">
+                      <div slot="imageUpload" class="text-xs-center">
                         <v-avatar size="150px" v-ripple v-if="!editedItem.profilPicture" class="grey lighten-3 mb-3 btn">
                           <span>Insérer une photo carré inférieure à 1MB</span>
                         </v-avatar>

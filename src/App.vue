@@ -42,4 +42,8 @@ main, .v-sidebar-menu{
     margin-top: 64px;
   }
 }
+#nprogress .bar {
+  height:6px;
+  background: purple;
+}
 </style>
