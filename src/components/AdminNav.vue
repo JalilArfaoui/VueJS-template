@@ -20,6 +20,11 @@ export default {
         //   title: 'Menu Admin'
         // },
         {
+          href: '/admin',
+          title: 'Talk It Easy',
+          icon: 'fab fa-pied-piper-hat'
+        },
+        {
           href: '/adminclients',
           title: 'Gestion des clients',
           icon: 'fas fa-users'
@@ -34,15 +39,15 @@ export default {
           icon: 'fas fa-route',
           child: [
                     {
-                        href: '/AdminNiveau1',
+                        href: '/admincourse/1',
                         title: 'Niveau 1',
                     },
                     {
-                        href: '/AdminNiveau2',
+                        href: '/admincourse/2',
                         title: 'Niveau 2',
                     },
                     {
-                        href: '/AdminNiveau3',
+                        href: '/admincourse/3',
                         title: 'Niveau 3',
                     },
                 ]
@@ -66,13 +71,51 @@ export default {
   },
   methods: {
     onCollapse (val) {
-      console.log(`collapsed ${val}`)
+      // console.log(`collapsed ${val}`)
       this.collapsed = val
     }
   }
 }
 </script>
-<style>
+<style lang="scss">
+
+// .v-sidebar-menu {
+//   height: auto !important;
+//   bottom:0;
+//   top:0;
+//   left:0;
+//   right:0;
+//   z-index: 42;
+//   background-color: $primary !important;
+// }
+.v-sidebar-menu .vsm-arrow:after{font-family: FontAwesome}
+.v-sidebar-menu .collapse-btn:after {
+  content: "\f07e";
+  font-family: FontAwesome;
+}
+
+// .v-sidebar-menu .vsm-item .vsm-icon{
+//   color: $secondary !important;
+//   background: none !important;
+// }
+// .v-sidebar-menu.white-theme .vsm-item.first-item.active-item>.vsm-link>.vsm-icon, .v-sidebar-menu.white-theme .vsm-item.first-item.parent-active-item>.vsm-link>.vsm-icon {
+//   color: white !important;
+// }
+.v-sidebar-menu.white-theme .vsm-link{
+  color: white !important;
+}
+.v-sidebar-menu.white-theme .vsm-link:hover{
+  background-color: $primary !important;
+}
+.v-sidebar-menu.white-theme.vsm-default .vsm-link:hover{
+  background-color: white !important;
+}
+.v-sidebar-menu.vsm-default .vsm-link:hover{
+  color: $primary !important;
+}
+.v-sidebar-menu.white-theme .vsm-dropdown>.vsm-list{
+  background-color: $secondary !important;
+}
 .v-sidebar-menu {
   height: auto !important;
   bottom:0;
@@ -80,12 +123,72 @@ export default {
   left:0;
   right:0;
   z-index: 42;
-  background-color: #00bcd4 !important;
-}
-.v-sidebar-menu .vsm-arrow:after{font-family: FontAwesome}
-.v-sidebar-menu .collapse-btn:after {
-content: "\f07e";
-font-family: FontAwesome;
+  background-color: $primary !important;
+    // & .vsm-link {
+    //     color: $itemColor;
+    // }
+    // & .vsm-item.mobile-item {
+    //     & > .vsm-link {
+    //         color: $mobileItemColor;
+    //     }
+    //     & > .vsm-icon {
+    //         color: $mobileIconColor;
+    //         background-color: $mobileIconBg;
+    //     }
+    // }
+    & .vsm-item.first-item {
+        & > .vsm-link {
+            & > .vsm-icon {
+              color: $secondary !important;
+              background: none !important;
+            }
+        }
+        &.active-item > .vsm-link, &.parent-active-item > .vsm-link {
+            box-shadow: 3px 0px 0px 0px $primary inset;
+            & > .vsm-icon {
+              color: $secondary !important;
+              background: none !important;
+            }
+        }
+    }
+    &.vsm-default {
+        & .vsm-item.first-item {
+            &.open-item > .vsm-link {
+                color: white !important;
+                background-color: $primary !important;
+                & > .vsm-icon {
+                  color: white !important;
+                    // background-color: $iconOpenBg;
+                }
+            }
+        }
+        & .vsm-link:hover {
+          color: white !important;
+          background-color: $primary !important;
+        }
+    }
+    // & .vsm-dropdown {
+    //     & > .vsm-list {
+    //         background-color: $dropDownBg;
+    //         & .vsm-link {
+    //             color: $dropDownColor;
+    //         }
+    //         & .vsm-link:hover {
+    //             color: $itemHoverColor;
+    //             background-color: $itemHoverBg;
+    //         }
+    //     }
+    // }
+    // & .vsm-mobile-bg {
+    //     background-color: $mobileItemBg;
+    // }
+    // & .vsm-header {
+    //     color: rgba($itemColor, 0.7);
+    // }
+    // & .collapse-btn {
+    //     color: $itemColor;
+    //     background-color: $darkenBg;
+    // }
 }
 </style>
 <!-- https://github.com/yaminncco/vue-sidebar-menu -->

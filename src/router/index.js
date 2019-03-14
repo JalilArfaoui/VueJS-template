@@ -16,9 +16,8 @@ import AdminDetailsClient from '../components/AdminDetailsClient.vue'
 import AdminUsers from '../components/AdminUsers.vue'
 import AdminCoachs from '../components/AdminCoachs.vue'
 import Administration from '../components/Administration.vue'
-import AdminNiveau1 from '../components/AdminNiveau1.vue'
-import AdminNiveau2 from '../components/AdminNiveau2.vue'
-import AdminNiveau3 from '../components/AdminNiveau3.vue'
+import AdminCourse from '../components/AdminCourse.vue'
+import NotFound from '../components/404.vue'
 import AdminMedias from '../components/AdminMedias.vue'
 
 Vue.use(Router)
@@ -27,11 +26,6 @@ Vue.use(Router)
 let router = new Router({
   mode: 'history',
   routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: Home
-    },
     {
       path: '/home',
       name: 'home',
@@ -123,27 +117,8 @@ let router = new Router({
       }
     },
     {
-      path: '/adminniveau1',
-      name: 'adminniveau1',
-      component: AdminNiveau1,
-      meta: {
-        requiresAuth: true,
-        requiresAdminAuth: true
-      }
-    },
-    {
-      path: '/adminniveau2',
-      name: 'adminniveau2',
-      component: AdminNiveau2,
-      meta: {
-        requiresAuth: true,
-        requiresAdminAuth: true
-      }
-    },
-    {
-      path: '/adminniveau3',
-      name: 'adminniveau3',
-      component: AdminNiveau3,
+      path: '/admincourse/:level',
+      component: AdminCourse,
       meta: {
         requiresAuth: true,
         requiresAdminAuth: true
@@ -157,6 +132,11 @@ let router = new Router({
         requiresAuth: true,
         requiresAdminAuth: true
       }
+    },
+    {
+      // MUST BE THE LAST cause it will match everything left
+      path: '*',
+      component: NotFound
     }
   ]
 })

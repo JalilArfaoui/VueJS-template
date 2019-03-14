@@ -11,7 +11,7 @@ import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css' // Ensure you are using css-loader
 import store from './store/store'
 import Vuelidate from 'vuelidate'
-import './css/nprogress.css'
+import './scss/nprogress.css'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faCoffee } from '@fortawesome/free-solid-svg-icons'
@@ -25,8 +25,9 @@ Vue.use(Vuelidate)
 // Vue.use(VueSidebarMenu)
 Vue.use(Vuetify, {
   theme: {
-    primary: '#3f51b5',
-    secondary: '#b0bec5',
+    primary: '#198BFF',
+    secondary: '#8CBCFF',
+    third: '#EF853A',
     accent: '#8c9eff',
     error: '#b71c1c'
   },
