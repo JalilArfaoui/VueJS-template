@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from './../store/store.js'
-import NProgress from 'nprogress'
+// import NProgress from 'nprogress'
 
 import Home from '../components/Home'
 import Login from '../components/Login'
@@ -27,10 +27,15 @@ let router = new Router({
   mode: 'history',
   routes: [
     {
-      path: '/home',
+      path: '/',
       name: 'home',
       component: Home
     },
+    // {
+    //   path: '/home',
+    //   name: 'home',
+    //   component: Home
+    // },
     {
       path: '/login',
       name: 'login',
@@ -160,18 +165,18 @@ router.beforeEach((to, from, next) => {
   }
 })
 
-router.beforeResolve((to, from, next) => {
-  // If this isn't an initial page load.
-  if (to.name) {
-    // Start the route progress bar.
-    NProgress.start()
-  }
-  next()
-})
-
-router.afterEach((to, from) => {
-  // Complete the animation of the route progress bar.
-  NProgress.done()
-})
+// router.beforeResolve((to, from, next) => {
+//   // If this isn't an initial page load.
+//   if (to.name) {
+//     // Start the route progress bar.
+//     NProgress.start()
+//   }
+//   next()
+// })
+//
+// router.afterEach((to, from) => {
+//   // Complete the animation of the route progress bar.
+//   NProgress.done()
+// })
 
 export default router

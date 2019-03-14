@@ -1,7 +1,64 @@
 <template>
   <div>
   <AdminNav />
-  <v-layout id="admin-layout" justify-space-around column>
+  <v-dialog v-model="dialog" max-width="500px">
+    <v-card>
+      <v-card-title>
+        <span class="headline">{{ formTitle }} {{ levelNum }}</span>
+      </v-card-title>
+
+      <v-card-text>
+        <v-container grid-list-md>
+          <v-layout wrap>
+            <v-flex xs12 sm10>
+              <v-text-field
+                v-if=""
+                v-model="editing.name"
+                label="Nom du niveau">
+              </v-text-field>
+              <v-text-field
+                v-if="this.level === 'secondLevel'"
+                v-model="editing.category"
+                label="Categorie du sous-niveau">
+              </v-text-field>
+              <v-select
+                v-if="this.level === 'itemCreation'"
+                v-model="editing.type"
+                :items="itemTypes"
+                item-text="state"
+                item-value="abbr"
+                label="Type d'item"
+                persistent-hint
+                return-object
+                single-line
+              ></v-select>
+            </v-flex>
+          </v-layout>
+        </v-container>
+        <v-alert
+          v-if='dialogError'
+          :value="dialogError"
+          type="error"
+          dismissible
+          icon="warning"
+          color="error"
+          outline
+          >
+          {{dialogError}}
+        </v-alert>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn color="blue darken-1" flat @click="close">Annuler</v-btn>
+        <v-btn color="blue darken-1" v-if="this.level === 'firstLevel'" flat @click="saveFirstLevel">Valider</v-btn>
+        <v-btn color="blue darken-1" v-else-if="this.level === 'secondLevel'" flat @click="saveSecondLevel">Valider</v-btn>
+        <v-btn color="blue darken-1" v-else flat @click="saveItem">Valider</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+  <v-layout id="admin-layout">
+    <v-flex xs3>
     <!-- <v-toolbar flat color="white">
       <v-toolbar-title>{{this.course}}</v-toolbar-title>
       <v-divider
@@ -10,7 +67,6 @@
         vertical
       ></v-divider>
       <v-spacer></v-spacer>
-      <v-dialog v-model="dialog" max-width="500px">
         <v-btn
           slot="activator"
           color="blue"
@@ -20,294 +76,143 @@
         >
           Ajouter un Niveau
         </v-btn>
-        <v-card>
-          <v-card-title>
-            <span class="headline">{{ formTitle }} {{ levelNum }}</span>
-          </v-card-title>
+      </v-toolbar> -->
 
-          <v-card-text>
-            <v-container grid-list-md>
-              <v-layout wrap>
-                <v-flex xs12 sm10>
-                  <v-text-field
-                    v-if=""
-                    v-model="editing.name"
-                    label="Nom du niveau">
-                  </v-text-field>
-                  <v-select
-                    v-if="this.level === 'itemCreation'"
-                    v-model="editing.type"
-                    :items="itemTypes"
-                    item-text="state"
-                    item-value="abbr"
-                    label="Type d'item"
-                    persistent-hint
-                    return-object
-                    single-line
-                  ></v-select>
-                </v-flex>
-              </v-layout>
-            </v-container>
-            <v-alert
-              v-if='dialogError'
-              :value="dialogError"
-              type="error"
-              dismissible
-              icon="warning"
-              color="error"
-              outline
-              >
-              {{dialogError}}
-            </v-alert>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click="close">Annuler</v-btn>
-            <v-btn color="blue darken-1" v-if="this.level === 'firstLevel'" flat @click="saveFirstLevel">Valider</v-btn>
-            <v-btn color="blue darken-1" v-else-if="this.level === 'secondLevel'" flat @click="saveSecondLevel">Valider</v-btn>
-            <v-btn color="blue darken-1" v-else flat @click="saveItem">Valider</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </v-toolbar> -->
     <v-toolbar color="white" >
             <v-toolbar-title>{{this.course}}</v-toolbar-title>
     </v-toolbar>
-    <v-list>
-            <v-list-group
-              v-for="(firstLevel, index) in firstLevels"
-              :key="index"
-              value="true"
-              no-action
-              class="firstLevelList"
-            >
-              <v-list-tile slot="activator">
-                <v-list-tile-action>
-                  <v-icon class="primary-text">crop_square</v-icon>
-                </v-list-tile-action>
-                <v-list-tile-content>
-                  <v-list-tile-title class="primary-text">{{ firstLevel.name }}</v-list-tile-title>
-                </v-list-tile-content>
-              </v-list-tile>
-              <!-- </template> -->
-
-              <v-list-tile
-                v-for="(secondLevel, indexSL) in firstLevel.secondLevels"
-                :key="indexSL"
-                @click=""
-                class="secondLevelList"
-              >
-                  <v-list-tile-content>
-                    <v-list-tile-title class="grey-text">{{ secondLevel.name }}</v-list-tile-title>
-                  </v-list-tile-content>
-
-                  <v-list-tile-action>
-                    <v-btn icon ripple>
-                      <v-icon color="grey">edit</v-icon>
-                    </v-btn>
-                  </v-list-tile-action>
-
-              </v-list-tile>
-
-              <v-list-tile>
-                <v-list-tile-action>
-                  <v-btn icon ripple>
-                    <v-icon class="add" color="grey">add</v-icon>
-                  </v-btn>
-                </v-list-tile-action>
-              </v-list-tile>
-
-            </v-list-group>
-
-            <v-list-tile>
-              <v-list-tile-action>
-                <v-btn icon ripple>
-                  <v-icon class="add" color="blue">add</v-icon>
-                </v-btn>
-              </v-list-tile-action>
-            </v-list-tile>
-
-          </v-list>
-
-    <!-- <v-list>
-          <v-list-tile
-            v-for="(firstLevel, index) in firstLevels"
-            :key="index"
-            avatar
-            @click=""
-          >
-            <v-list-tile-action>
-              <v-icon color="pink">crop_square</v-icon>
-            </v-list-tile-action>
-
-            <v-list-tile-content>
-              <v-list-tile-title v-text="firstLevel.name"></v-list-tile-title>
-            </v-list-tile-content>
-            <v-list>
-              <v-list-tile
-                v-for="(secondLevel, indexSL) in firstLevel.secondLevels"
-                :key="indexSL"
-                avatar
-                @click=""
-              >
-
-                <v-list-tile-content>
-                  <v-list-tile-title v-text="secondLevel.name"></v-list-tile-title>
-                </v-list-tile-content>
-
-              </v-list-tile>
-            </v-list>
-          </v-list-tile>
-        </v-list> -->
-
-    <!-- <v-tabs
-      v-model="activeFL"
-      centered
-      slider-color="blue"
-      grow
-      >
-      <v-tab
+    <v-expansion-panel
+      value=true
+    >
+      <v-expansion-panel-content
         v-for="(firstLevel, index) in firstLevels"
         :key="index"
-        ripple
-        >
-        Niveau {{ index + 1 }}
-        </br>
-        {{firstLevel.name}}
-        <v-btn
-          fab
-          small
-          color="transparent"
-          @click="editFirstLevel(firstLevel)"
+        class="firstLevelList"
+      >
+        <template v-slot:header>
+          <div class="text-primary">
+            <v-icon class="text-primary">crop_square</v-icon>
+            {{firstLevel.name}}
+            <v-btn
+              icon
+              ripple
+              small
+              @click="editFirstLevel(firstLevel)"
+              >
+              <v-icon class="hover-icon" color="grey">edit</v-icon>
+            </v-btn>
+            <v-btn
+              icon
+              ripple
+              small
+              @click="tryDeleteFirstLevel(firstLevel)"
+              >
+              <v-icon class="hover-icon" color="grey">delete</v-icon>
+            </v-btn>
+          </div>
+        </template>
+        <v-list>
+          <v-list-tile
+            v-for="(secondLevel, indexSL) in firstLevel.secondLevels"
+            :key="indexSL"
+            @click=""
+            class="secondLevelList"
           >
+          <!-- :class="secondLevel.path === $route.path ? 'active-secondlevel' : ''" -->
+              <v-list-tile-content>
+                <v-list-tile-title class="grey-text" @click="activeSL(firstLevel, secondLevel)"><span v-if="secondLevel.category">[{{ secondLevel.category }}] </span>{{ secondLevel.name }}</v-list-tile-title>
+              </v-list-tile-content>
+
+              <v-list-tile-action>
+                <v-btn icon ripple
+                @click="editSecondLevel(secondLevel)">
+                  <v-icon class="hover-icon-sl" color="grey">edit</v-icon>
+                </v-btn>
+                <v-btn icon
+                  @click="tryDeleteSecondLevel(secondLevel)"
+                  >
+                  <v-icon class="hover-icon-sl" color="grey">delete</v-icon>
+                </v-btn>
+              </v-list-tile-action>
+
+          </v-list-tile>
+
+          <v-list-tile>
+            <v-list-tile-action>
+              <v-btn
+                icon
+                ripple
+                @click="addSecondLevel(firstLevel)"
+              >
+                <v-icon class="hover-icon" color="grey">add</v-icon>
+              </v-btn>
+            </v-list-tile-action>
+          </v-list-tile>
+        </v-list>
+
+      </v-expansion-panel-content>
+      <v-btn
+        icon
+        ripple
+        @click="addFirstLevel()"
+        >
+        <v-icon color="blue">add</v-icon>
+      </v-btn>
+    </v-expansion-panel>
+</v-flex>
+<v-flex xs-9>
+  <p class="text-primary" v-if="this.currentFL">
+    <b>{{ this.currentFL.name }}></b>{{ this.currentSL.name }}
+  </p>
+  <v-tabs
+    fixed-tabs
+    show-arrows
+    justify-space-between
+    hide-slider
+  >
+    <v-tab
+      v-for="item in this.currentSL.items"
+      :key="n"
+      ripple
+      active-class="active-item"
+      class="item text-grey"
+    >
+      <!-- <v-btn class="item text-grey"> -->
+        {{item.name}}
+        <v-btn
+          icon
+          ripple
+          @click="editItem(item)"
+          class="hover-icon-item"
+        >
           <v-icon>edit</v-icon>
         </v-btn>
         <v-btn
-          fab
-          small
-          color="transparent"
-          @click="tryDeleteFirstLevel(firstLevel)"
-          >
+          icon
+          ripple
+          @click="deleteItem(item)"
+          class="hover-icon-item"
+        >
           <v-icon>delete</v-icon>
         </v-btn>
-      </v-tab>
-    </v-tabs>
-
-
-  <v-tabs-items v-model="activeFL">
-      <v-tab-item
-        v-for="(firstLevel, index) in firstLevels"
-        :key="index"
-      >
+      <!-- </v-btn> -->
+    </v-tab>
+    <v-tab
+      ripple
+      active-class="active-item"
+      class="item text-grey"
+    >
       <v-btn
-        color="blue"
-        dark
         small
         centered
         fab
-        @click="level = 'secondLevel', dialog = true"
+        @click="addItem()"
       >
         <v-icon>add</v-icon>
       </v-btn>
-      <div
-        v-for="(secondLevel, indexSL) in firstLevel.secondLevels"
-        :key="indexSL"
-      >
-        <v-toolbar flat
-          color="pink"
-          dark
-        >
-          <v-toolbar-title>{{secondLevel.name}}</v-toolbar-title>
-          <v-spacer></v-spacer>
-          <v-btn icon
-          @click="editSecondLevel(secondLevel)"
-            >
-            <v-icon>edit</v-icon>
-          </v-btn>
-          <v-btn icon
-            @click="tryDeleteSecondLevel(secondLevel)"
-            >
-            <v-icon>delete</v-icon>
-          </v-btn>
-        </v-toolbar>
-        <v-card>
-            <v-container
-              fluid
-              grid-list-lg
-            >
-              <v-layout row wrap>
-                <v-btn
-                  color="pink"
-                  dark
-                  small
-                  centered
-                  fab
-                  @click="level = 'itemCreation', currentSL = secondLevel, dialog = true,  positionItem = 0"
-                >
-                  <v-icon>add</v-icon>
-                </v-btn>
-                <v-flex xs12
-                  v-for="(item, indexItem) in secondLevel.items"
-                  :key="indexItem"
-                >
-
-                  <v-card
-                    v-bind:class="item.type"
-                    class="white--text"
-                  >
-                    <v-card-title primary-title>
-                      <div>
-                        <span>{{item.type}}</span>
-                        <div class="headline">{{item.name}}</div>
-                      </div>
-                      <v-spacer></v-spacer>
-                      <v-btn
-                        icon
-                        dark
-                        @click="editItem(item)"
-                      >
-                        <v-icon>edit</v-icon>
-                      </v-btn>
-                      <v-btn
-                        icon
-                        dark
-                        @click="deleteItem(item)"
-                      >
-                        <v-icon>delete</v-icon>
-                      </v-btn>
-                    </v-card-title>
-                  </v-card>
-                  <v-btn
-                    color="pink"
-                    dark
-                    small
-                    centered
-                    fab
-                    @click="level = 'itemCreation', currentSL = secondLevel, dialog = true, positionItem = indexItem + 1 "
-                  >
-                    <v-icon>add</v-icon>
-                  </v-btn>
-                </v-flex>
-
-
-              </v-layout>
-            </v-container>
-          </v-card>
-          <v-btn
-            color="blue"
-            dark
-            small
-            centered
-            fab
-            @click="level = 'secondLevel', dialog = true, position = indexSL + 1 "
-          >
-            <v-icon>add</v-icon>
-          </v-btn>
-        </div>
-      </v-tab-item>
-    </v-tabs-items>
-     -->
+    </v-tab>
+  </v-tabs>
+</v-flex>
   <v-alert
     v-if='error'
     :value="error"
@@ -373,6 +278,7 @@ export default {
   },
   data () {
     return {
+      panel: true,
       name: this.$store.state.user.name,
       course: '',
       dialog: false,
@@ -395,7 +301,8 @@ export default {
       positionItem: 0,
       editingIndex: -1,
       editing: {
-        name: ''
+        name: '',
+        category: ''
       },
       defaultlevel: {
         name: ''
@@ -432,26 +339,20 @@ export default {
     if (localStorage.setUser) {
       this.email = localStorage.setUser
     }
-    this.addCSS()
   },
   methods: {
-    // addCSS() {
-    //   $(".v-list__tile").css("flex-direction: column;")
-    // },
+    addItem(){
+      this.level = 'itemCreation'
+      this.dialog = true
+    },
+    activeSL(fl,sl) {
+      this.currentFL = fl
+      this.currentSL = sl
+
+    },
     setCourse() {
       this.course = 'Niveau ' + this.$route.params.level
     },
-    // async getCourseId () {
-    //   try {
-    //     const res = await LevelService.getCourseId({
-    //       name: this.course.name
-    //     })
-    //     this.course.id = res.data._id
-    //     this.getFirstLevels()
-    //   } catch (e) {
-    //     this.error = e.response
-    //   }
-    // },
     async getFirstLevels () {
       try {
         const firstLevels = await LevelService.getFirstLevels({
@@ -469,6 +370,10 @@ export default {
       this.editing = Object.assign({}, level)
       this.level = 'firstLevel'
       this.dialog = true
+    },
+    addFirstLevel() {
+      this.dialog = true,
+      this.level = 'firstLevel'
     },
     async saveFirstLevel () {
       if (this.editingIndex > -1) {
@@ -511,12 +416,18 @@ export default {
       this.level = 'secondLevel'
       this.dialog = true
     },
+    addSecondLevel(firstLevel) {
+      this.dialog = true,
+      this.level = 'secondLevel'
+      this.currentFL = firstLevel
+    },
     async saveSecondLevel () {
       if (this.editingIndex > -1) {
         try {
           const editing = await LevelService.editSecondLevel({
             _id: this.editing._id,
-            name: this.editing.name
+            name: this.editing.name,
+            category: this.editing.category
           })
           if (editing) {
             Object.assign(this.currentFL.secondLevels[this.editingIndex], this.editing)
@@ -531,10 +442,13 @@ export default {
         try {
           const res = await LevelService.createSecondLevel({
             name: this.editing.name,
-            _firstLevel: this.firstLevels[this.activeFL]._id,
-            position: this.position
+            // _firstLevel: this.firstLevels[this.activeFL]._id,
+            _firstLevel: this.currentFL._id,
+            category: this.editing.category
+            // position: this.position
           })
           if (res.data.firstlevel) {
+            // console.log(this.activeFL)
             // this.secondLevels.push(res.data.level)
             this.firstLevels.find(x => x._id === res.data.firstlevel._id).secondLevels = res.data.firstlevel.secondLevels
             this.close()
@@ -577,13 +491,12 @@ export default {
             name: this.editing.name,
             type: this.editing.type,
             _secondLevel: this.currentSL._id,
-            position: this.positionItem
+            // position: this.positionItem
           })
-          console.log(res.data.firstlevel);
-
-          if (res.data.firstlevel) {
-            // this.secondLevels.push(res.data.level)
-            this.firstLevels.find(x => x._id === res.data.firstlevel._id).secondLevels = res.data.firstlevel.secondLevels
+          if (res.data.secondlevel) {
+            console.log(res.data.secondlevel);
+            // this.firstLevels.find(x => x._id === res.data.firstlevel._id).secondLevels = res.data.firstlevel.secondLevels
+            this.currentSL = res.data.secondlevel
             this.close()
           } else {
             this.dialogError = 'Modification non prise en compte.'
@@ -699,23 +612,58 @@ export default {
 .v-toolbar{
   box-shadow: none;
 }
-
-.primary-text{
-  color: $primary;
-}
-.grey-text{
-  color: $grey;
-}
 .firstLevelList {
-  .add{
+  padding-left: 2em;
+  padding-right: 2em;
+
+  .hover-icon{
     display: none;
   }
-  &:hover .add{
+  &:hover .hover-icon{
     display: block;
   }
 }
+.secondLevelList {
+  .hover-icon-sl{
+    display: none;
+  }
+  &:hover .hover-icon-sl{
+    display: block;
+  }
+}
+.item {
+  .hover-icon-item{
+    display: none;
+  }
+  &:hover .hover-icon-item{
+    display: block;
+  }
+}
+
 .theme--light.v-list .v-list__group--active:after, .theme--light.v-list .v-list__group--active:before {
   background: none !important;
 }
+ul {
+  list-style-type: none;
+  display: flex;
+}
+.item{
+  background-color: #ECF6FF !important;
+  margin: auto !important;
+  border-radius: 20px;
+}
 
+</style>
+
+<style lang="scss">
+.v-tabs__bar.theme--light {
+  background: none !important;
+}
+.v-list__tile__action--stack{
+  flex-direction: row;
+}
+.active-item{
+  color: $primary;
+  font-weight: bolder;
+}
 </style>

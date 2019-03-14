@@ -156,7 +156,7 @@ export default {
       this.authRequired = this.$route.query.authRequired
     }
     if (this.$store.state.isUserLoggedIn) {
-      this.$router.push('/home')
+      this.$router.push('/')
       // this.isUserLoggedIn = this.$store.state.isUserLoggedIn
       // this.userEmail = this.$store.state.user.email
     }
@@ -206,7 +206,7 @@ export default {
             this.$store.dispatch('setAdmin', res.data.user)
               .then(() => this.$router.push('/admin'))
           } else {
-            this.$router.push('/home')
+            this.$router.push('/')
           }
         }
       } catch (e) {

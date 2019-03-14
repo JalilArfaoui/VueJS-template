@@ -1,5 +1,5 @@
 <template>
-    <sidebar-menu id="AdminNav" :class="{'collapsed' : collapsed}" :menu="menu" :collapsed="collapsed" @collapse="onCollapse" :theme="selectedTheme"/>
+    <sidebar-menu id="AdminNav" @itemClick="onItemClick" :class="{'collapsed' : collapsed}" :menu="menu" :collapsed="collapsed" @collapse="onCollapse" :theme="selectedTheme" />
 </template>
 
 <script>
@@ -61,6 +61,11 @@ export default {
           href: '/administration',
           title: 'Administration',
           icon: 'fas fa-gopuram'
+        },
+        {
+          href: '/admin',
+          title: 'Deconnexion',
+          icon: 'fas fa-sign-out-alt'
         }
       ],
       collapsed: true,
@@ -70,8 +75,19 @@ export default {
     }
   },
   methods: {
+    onItemClick(event, item) {
+      console.log('Item Clicked')
+      // if(item == 'Deconnexion') {
+        this.$store.dispatch('setClient', null)
+        this.$store.dispatch('setToken', null)
+        this.$store.dispatch('setAdmin', null)
+        this.$store.dispatch('setUser', null)
+          // .then(() => this.$router.push('/login'))
+      // }
+    },
     onCollapse (val) {
-      // console.log(`collapsed ${val}`)
+      console.log(`collapsed ${val}`)
+      console.log(this.$store)
       this.collapsed = val
     }
   }

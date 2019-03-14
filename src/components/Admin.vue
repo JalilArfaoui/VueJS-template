@@ -3,13 +3,14 @@
   <AdminNav />
   <v-layout id="admin-layout" justify-space-around column>
     <v-toolbar flat color="white">
-      <v-toolbar-title>This page is the admin dashboard</v-toolbar-title>
+      <v-toolbar-title>This pages is the admin dashboard</v-toolbar-title>
       <v-divider
         class="mx-2"
         inset
         vertical
       ></v-divider>
       <v-spacer></v-spacer>
+      <a @click="logout">Disconnect</a>
     </v-toolbar>
 
     <!-- <v-dialog v-model="dialog" max-width="500px">
@@ -178,6 +179,13 @@ export default {
     }
   },
   methods: {
+    logout() {
+      this.$store.dispatch('setClient', null)
+      this.$store.dispatch('setToken', null)
+      this.$store.dispatch('setAdmin', null)
+      this.$store.dispatch('setUser', null)
+        .then(() => this.$router.push('/login'))
+    },
     async getUsers () {
       try {
         const users = await AdminService.getUsers()
