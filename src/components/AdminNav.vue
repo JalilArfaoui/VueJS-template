@@ -63,7 +63,7 @@ export default {
           icon: 'fas fa-gopuram'
         },
         {
-          href: '/admin',
+          href: '/login',
           title: 'Deconnexion',
           icon: 'fas fa-sign-out-alt'
         }
@@ -77,7 +77,7 @@ export default {
   methods: {
     onItemClick(event, item) {
       console.log(item)
-      if(item == 'Deconnexion') {
+      if(item.href == 'login') {
         this.$store.dispatch('setClient', null)
         this.$store.dispatch('setToken', null)
         this.$store.dispatch('setAdmin', null)
