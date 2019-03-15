@@ -1,8 +1,10 @@
+const webpack = require ('webpack');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const Dotenv = require('dotenv-webpack');
 const env = process.env.NODE_ENV;
+const PUBLIC_PATH = process.env.PUBLIC_PATH || '/';
 const path = require('path');
 
 // Extend it as you need.
@@ -11,6 +13,11 @@ function resolve (dir) {
 }
 
 module.exports = {
+  entry: "./src",
+  output: {
+    // publicPath: 'http://localhost:8080/'
+    publicPath: PUBLIC_PATH
+  },
   devtool: 'source-map',
   resolve: {
     extensions: ['.js', '.vue', '.json'],
@@ -111,6 +118,9 @@ module.exports = {
     }),
     new Dotenv({
       path: `./.env${env === "production" ? ".prod" : ""}`,
+    }),
+    new webpack.DefinePlugin({
+      'process.env.PUBLIC_PATH': JSON.stringify(PUBLIC_PATH)
     })
   ]
 };

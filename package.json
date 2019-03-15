@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack-dev-server --mode development --open --content-base --history-api-fallback src --hot --inline",
+    "dev": "webpack-dev-server --mode development --open --content-base src --hot --inline",
     "build": "webpack --mode production",
     "postinstall": "npm run build",
     "start": "node server.js"
