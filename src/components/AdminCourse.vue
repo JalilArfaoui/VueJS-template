@@ -19,7 +19,7 @@
               <v-text-field
                 v-if="this.level === 'secondLevel'"
                 v-model="editing.category"
-                label="Categorie du sous-niveau">
+                label="Categorie du niveau">
               </v-text-field>
               <v-select
                 v-if="this.level === 'itemCreation'"
@@ -125,7 +125,8 @@
 
               <v-list-tile-action>
                 <v-btn icon ripple
-                @click="editSecondLevel(secondLevel)">
+                  @click="editSecondLevel(secondLevel)"
+                >
                   <v-icon class="hover-icon-sl" color="grey">edit</v-icon>
                 </v-btn>
                 <v-btn icon
@@ -161,7 +162,7 @@
     </v-expansion-panel>
 </v-flex>
 
-<v-flex xs-9  v-if="this.currentSL">
+<v-flex xs-9  v-if="this.currentSL.name">
   <p class="text-primary">
     <b>{{ this.currentFL.name }}></b>{{ this.currentSL.name }}
   </p>
@@ -313,10 +314,10 @@ export default {
   },
   computed: {
     formTitle () {
-      return this.editingIndex === -1 ? 'Nouveau niveau': 'Modifier le niveau n°'
+      return this.editingIndex === -1 ? 'Créer un niveau ': 'Modifier le niveau n°'
     },
     levelNum () {
-      return this.level === 'firstLevel' ? '1': '2'
+      return this.level === 'firstLevel' ? '2': '3'
     }
   },
   watch: {
@@ -326,12 +327,16 @@ export default {
     '$route' (to, from) {
       this.setCourse()
       this.getFirstLevels()
+    },
+    'currentSL' () {
+      console.log(this.currentSL.name)
     }
   },
   created () {
     // this.getCourseId()
     this.setCourse()
     this.getFirstLevels()
+    console.log(this.currentSL)
   },
   mounted () {
     if (localStorage.name) {
@@ -349,7 +354,6 @@ export default {
     activeSL(fl,sl) {
       this.currentFL = fl
       this.currentSL = sl
-
     },
     setCourse() {
       this.course = 'Niveau ' + this.$route.params.level
@@ -580,7 +584,8 @@ export default {
         try {
           const deleted = await LevelService.deleteItem(item._id)
           if (deleted) {
-            this.firstLevels.find(x => x._id === deleted.data._id).secondLevels = deleted.data.secondLevels
+            this.currentSL = deleted.data.secondlevel
+            this.firstLevels.find(x => x._id === deleted.data.firstlevel._id).secondLevels = deleted.data.firstlevel.secondLevels
           }
         } catch (error) {
           this.dialogError = error.response.data.errors

@@ -78,6 +78,7 @@ export default {
     onItemClick(event, item) {
       console.log(item)
       if(item.href == 'login') {
+        console.log('logging out')
         this.$store.dispatch('setClient', null)
         this.$store.dispatch('setToken', null)
         this.$store.dispatch('setAdmin', null)
@@ -86,8 +87,7 @@ export default {
       }
     },
     onCollapse (val) {
-      console.log(`collapsed ${val}`)
-      console.log(this.$store)
+      // console.log(`collapsed ${val}`)
       this.collapsed = val
     }
   }
