@@ -4,6 +4,7 @@
       <!-- <v-layout id="admin-layout" justify-space-around column> -->
       <v-toolbar flat color="white">
         <v-toolbar-title>Circuits</v-toolbar-title>
+        <a @click="logout">Disconnect</a>
         <!-- <v-divider
         class="mx-2"
         inset
@@ -137,6 +138,13 @@ export default {
     }
   },
   methods: {
+    logout() {
+      this.$store.dispatch('setClient', null)
+      this.$store.dispatch('setToken', null)
+      this.$store.dispatch('setAdmin', null)
+      this.$store.dispatch('setUser', null)
+        .then(() => this.$router.push('/login'))
+    },
     async getFirstLevels () {
       try {
         const firstLevels = await LevelService.getFirstLevels()
