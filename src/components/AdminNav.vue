@@ -83,7 +83,7 @@ export default {
         this.$store.dispatch('setAdmin', null)
         this.$store.dispatch('setUser', null)
           .then(() => this.$router.push('/login'))
-      // }
+      }
     },
     onCollapse (val) {
       console.log(`collapsed ${val}`)
