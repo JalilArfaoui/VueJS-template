@@ -76,13 +76,13 @@ export default {
   },
   methods: {
     onItemClick(event, item) {
-      console.log('Item Clicked')
-      // if(item == 'Deconnexion') {
+      console.log(item)
+      if(item == 'Deconnexion') {
         this.$store.dispatch('setClient', null)
         this.$store.dispatch('setToken', null)
         this.$store.dispatch('setAdmin', null)
         this.$store.dispatch('setUser', null)
-          // .then(() => this.$router.push('/login'))
+          .then(() => this.$router.push('/login'))
       // }
     },
     onCollapse (val) {
