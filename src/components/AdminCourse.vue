@@ -160,8 +160,9 @@
       </v-btn>
     </v-expansion-panel>
 </v-flex>
-<v-flex xs-9>
-  <p class="text-primary" v-if="this.currentFL">
+
+<v-flex xs-9  v-if="this.currentSL">
+  <p class="text-primary">
     <b>{{ this.currentFL.name }}></b>{{ this.currentSL.name }}
   </p>
   <v-tabs
