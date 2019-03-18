@@ -72,7 +72,7 @@ let router = new Router({
       name: 'admin',
       component: Admin,
       meta: {
-        requiresAuth: true,
+        // requiresAuth: true,
         requiresAdminAuth: true
       }
     },
@@ -81,7 +81,7 @@ let router = new Router({
       name: 'adminclients',
       component: AdminClients,
       meta: {
-        requiresAuth: true,
+        // requiresAuth: true,
         requiresAdminAuth: true
       }
     },
@@ -90,7 +90,7 @@ let router = new Router({
       name: 'admindetailsclient',
       component: AdminDetailsClient,
       meta: {
-        requiresAuth: true,
+        // requiresAuth: true,
         requiresAdminAuth: true
       }
     },
@@ -99,7 +99,7 @@ let router = new Router({
       name: 'adminusers',
       component: AdminUsers,
       meta: {
-        requiresAuth: true,
+        // requiresAuth: true,
         requiresAdminAuth: true
       }
     },
@@ -108,7 +108,7 @@ let router = new Router({
       name: 'admincoachs',
       component: AdminCoachs,
       meta: {
-        requiresAuth: true,
+        // requiresAuth: true,
         requiresAdminAuth: true
       }
     },
@@ -117,7 +117,7 @@ let router = new Router({
       name: 'administration',
       component: Administration,
       meta: {
-        requiresAuth: true,
+        // requiresAuth: true,
         requiresAdminAuth: true
       }
     },
@@ -125,7 +125,7 @@ let router = new Router({
       path: '/admincourse/:level',
       component: AdminCourse,
       meta: {
-        requiresAuth: true,
+        // requiresAuth: true,
         requiresAdminAuth: true
       }
     },
@@ -134,7 +134,7 @@ let router = new Router({
       name: 'adminmedias',
       component: AdminMedias,
       meta: {
-        requiresAuth: true,
+        // requiresAuth: true,
         requiresAdminAuth: true
       }
     },
@@ -149,17 +149,16 @@ let router = new Router({
 router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (store.state.isUserLoggedIn) {
-      if (to.matched.some(record => record.meta.requiresAdminAuth)) {
-        if (store.state.isUserAdmin) {
-          next()
-          return
-        }
-        next({ path: '/dashboard', query: { authAdminRequired: true } })
-      }
       next()
       return
     }
     next({ path: '/login', query: { authRequired: true } })
+  } else if (to.matched.some(record => record.meta.requiresAdminAuth)) {
+    if (store.state.isUserLoggedIn && store.state.isUserAdmin) {
+      next()
+      return
+    }
+    next({ path: '/dashboard', query: { authAdminRequired: true } })
   } else {
     next()
   }

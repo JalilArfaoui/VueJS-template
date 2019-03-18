@@ -285,7 +285,7 @@ export default {
           })
           if (res.data.coach.email) {
             this.editedItem.profilPicture = this.avatarUrl
-            this.coachs.push(this.editedItem)
+            this.coachs.push(res.data.coach)
             this.close()
           } else {
             this.dialogError = 'Modification non prise en compte'

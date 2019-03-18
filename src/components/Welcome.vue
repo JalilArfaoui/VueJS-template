@@ -190,7 +190,7 @@ export default {
               this.$store.dispatch('setAdmin', response.data.user)
                 .then(() => this.$router.push('/admin'))
             } else {
-              this.$router.push('/home')
+              this.$router.push('/')
             }
 
           } else {

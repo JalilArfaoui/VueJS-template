@@ -76,9 +76,7 @@ export default {
   },
   methods: {
     onItemClick(event, item) {
-      console.log(item)
       if(item.href == '/login') {
-        console.log('logging out')
         this.$store.dispatch('setClient', null)
         this.$store.dispatch('setToken', null)
         this.$store.dispatch('setAdmin', null)

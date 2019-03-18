@@ -37,6 +37,7 @@
             required
             :rules="emailRules"
             autocomplete="false"
+            v-on:keyup.enter="isUser"
             >
           </v-text-field>
           <br>
@@ -45,10 +46,13 @@
             label="Mot de passe"
             type="password"
             name="password"
+            ref="password"
             v-model="password"
             required
             :rules="passwordRules"
             :counter="34"
+            autofocus
+            v-on:keyup.enter="login"
             >
           </v-text-field>
           <!-- <router-link
@@ -79,6 +83,13 @@
         </v-alert>
         <br>
         <v-btn
+          v-show="!confirmedUser"
+          dark
+          @click="isUser"
+          class="green">
+          Démarrer
+        </v-btn>
+        <v-btn
           v-show="confirmedUser"
           :disabled="!valid"
           color="primary"
@@ -93,13 +104,7 @@
           class="green">
           Démarrer
         </v-btn> -->
-        <v-btn
-          v-show="!confirmedUser"
-          dark
-          @click="isUser"
-          class="green">
-          Démarrer
-        </v-btn>
+
       </slot>
     </panel>
 </v-flex>
@@ -182,6 +187,8 @@ export default {
           } else if (state.data === 'Activé') {
             this.newUser = false
             this.confirmedUser = true
+            console.log(this.$refs.password.$refs.input)
+            this.$refs.password.$refs.input.focus()
           }
         }
       } catch (e) {

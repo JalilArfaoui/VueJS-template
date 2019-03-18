@@ -26,10 +26,12 @@
                           <span>Insérer un media audio ou vidéo inférieur à 300MB</span>
                         </v-avatar>
                         <v-avatar size="150px" v-ripple v-else-if="editedItem.link.mediaURL" class="mb-3">
-                          <img :src="editedItem.link.mediaURL" alt="media">
+                          <!-- <img :src="editedItem.link.mediaURL" alt="media"> -->
+                          <p> {{ editedItem.link.mediaFile.name }} </p>
                         </v-avatar>
                         <v-avatar size="150px" v-ripple v-else class="mb-3">
-                          <img :src="editedItem.link" alt="media">
+                          <p> {{ editedItem.link }} </p>
+                          <!-- <img :src="editedItem.link" alt="media"> -->
                         </v-avatar>
                       </div>
                     </file-input>
@@ -247,7 +249,6 @@ export default {
       // }
       if (this.editedIndex > -1) { // Edit media case
         try {
-          console.log(this.editedItem);
           const edited = await AdminService.editMedia({
             _id: this.editedItem._id,
             name: this.editedItem.name,
@@ -255,7 +256,6 @@ export default {
             link: this.editedItem.link
           })
           if (edited) {
-            console.log(edited.data);
             // this.editedItem.link = this.avatarUrl
             Object.assign(this.medias[this.editedIndex], this.editedItem)
             this.close()
@@ -276,7 +276,7 @@ export default {
           if (res.data.media) {
             // this.editedItem.link = this.mediaUrl
             this.editedItem.updatedAt = new Date(res.data.media.updatedAt).toLocaleDateString("fr-FR")
-            this.medias.push(this.editedItem)
+            this.medias.push(res.data.media)
             this.close()
           } else {
             this.dialogError = 'Modification non prise en compte'

@@ -295,7 +295,7 @@ export default {
             type: this.editedItem.type
           })
           if (res.data.client.name) {
-            this.clients.push(this.editedItem)
+            this.clients.push(res.data.client)
             this.close()
           } else {
             this.dialogError = 'Modification non prise en compte'

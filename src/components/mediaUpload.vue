@@ -63,7 +63,7 @@
             // formData.append(fieldName, mediaFile)
             formData.append('media', mediaFile)
             // Emit FormData & media URL to the parent component
-            this.$emit('input', { formData, mediaURL })
+            this.$emit('input', { formData, mediaURL , mediaFile})
           }
         }
       }

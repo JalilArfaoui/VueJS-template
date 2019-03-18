@@ -237,10 +237,9 @@ export default {
             email: this.editedItem.email
           })
           if (res.data.user.email) {
-            console.log(res.data.user)
             this.editedItem.capacity = res.data.user.capacity
             this.editedItem.state = res.data.user.state
-            this.users.push(this.editedItem)
+            this.users.push(res.data.user)
             this.close()
           } else {
             this.dialogError = 'Modification non prise en compte'
