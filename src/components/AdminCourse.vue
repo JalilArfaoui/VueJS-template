@@ -62,13 +62,14 @@
     </v-card>
   </v-dialog>
   <v-layout id="admin-layout">
-    <v-flex xs3 id="treeLevel">
+    <v-flex xs4 md3 id="treeLevel">
       <v-toolbar color="white" >
         <v-toolbar-title>{{this.course}}</v-toolbar-title>
       </v-toolbar>
 
       <v-expansion-panel
-        value=true
+        :value="Array(5).fill(true)"
+        expand
       >
         <v-expansion-panel-content
           v-for="(firstLevel, index) in firstLevels"
@@ -84,7 +85,7 @@
                   ripple
                   small
                   @click="editFirstLevel(firstLevel)"
-                  >
+                >
                   <v-icon class="hover-icon" color="grey">edit</v-icon>
                 </v-btn>
                 <v-btn
@@ -92,7 +93,7 @@
                   ripple
                   small
                   @click="tryDeleteFirstLevel(firstLevel)"
-                  >
+                >
                   <v-icon class="hover-icon" color="grey">delete</v-icon>
                 </v-btn>
               </h3>
@@ -154,7 +155,7 @@
       </v-expansion-panel>
     </v-flex>
 
-    <v-flex xs-9  v-if="this.currentSL.name">
+    <v-flex xs8 md9  id="items" v-if="this.currentSL.name">
       <p class="text-primary">
         <b>{{ this.currentFL.name }}></b>{{ this.currentSL.name }}
       </p>
@@ -165,31 +166,14 @@
         hide-slider
       >
         <v-tab
-          v-for="item in this.currentSL.items"
-          :key="n"
+          v-for="(item, itemIndex) in this.currentSL.items"
+          :key="itemIndex"
           ripple
           active-class="active-item"
           class="item text-grey"
+          @click="activeItem(item)"
         >
-          <!-- <v-btn class="item text-grey"> -->
-            {{item.name}}
-            <v-btn
-              icon
-              ripple
-              @click="editItem(item)"
-              class="hover-icon-item"
-            >
-              <v-icon>edit</v-icon>
-            </v-btn>
-            <v-btn
-              icon
-              ripple
-              @click="deleteItem(item)"
-              class="hover-icon-item"
-            >
-              <v-icon>delete</v-icon>
-            </v-btn>
-          <!-- </v-btn> -->
+          {{item.name}}
         </v-tab>
         <v-tab
           ripple
@@ -206,6 +190,94 @@
           </v-btn>
         </v-tab>
       </v-tabs>
+      <v-card v-if="this.currentItem">
+        <v-card-text>
+          <v-container grid-list-md>
+            <v-layout wrap>
+              <v-flex xs12 sm10>
+                <v-text-field
+                  v-model="currentItem.name"
+                  label="Titre"
+                  autocomplete="true"
+                  autofocus
+                  >
+                </v-text-field>
+                <v-select
+                  v-model="currentItem.type"
+                  :items="itemTypes"
+                  label="Type">
+                  ></v-select>
+                <v-text-field
+                  v-model="currentItem.consigne"
+                  label="Consigne"
+                  autocomplete="true"
+                  >
+                </v-text-field>
+                <div
+                  v-for="(content, n) in this.currentItem.content"
+                  :key="n"
+                >
+                  <v-select
+                    v-model="content.mediaName"
+                    :items="medias"
+                    label="Média à afficher"
+                    item-text="name"
+                  ></v-select>
+                  <v-checkbox
+                    v-model="content.record"
+                    label="L'utilisateur doit-il s'enregistrer ?"
+                  ></v-checkbox>
+                </div>
+
+                <v-text-field
+                  v-model="currentItem.conclusion"
+                  label="Conclusion"
+                  autocomplete="true"
+                  >
+                </v-text-field>
+                <v-text-field
+                  v-model="currentItem.leftButton"
+                  label="Bouton précédent"
+                  autocomplete="false"
+                  >
+                </v-text-field>
+                <v-text-field
+                  v-model="currentItem.rightButton"
+                  label="Bouton suivant"
+                  autocomplete="false"
+                  >
+                </v-text-field>
+                <v-btn
+                v-if="this.level !== 'newItem'"
+                  icon
+                  ripple
+                  @click="deleteItem(currentItem)"
+                >
+                  <v-icon>delete</v-icon>
+                </v-btn>
+              </v-flex>
+            </v-layout>
+          </v-container>
+          <v-alert
+            v-if='dialogError'
+            :value="dialogError"
+            type="error"
+            dismissible
+            icon="warning"
+            color="error"
+            outline
+            >
+            {{dialogError}}
+          </v-alert>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" flat @click="close">Annuler</v-btn>
+          <v-btn color="blue darken-1" flat v-if="this.level === 'newItem'" @click="saveItem">Ajouter</v-btn>
+          <v-btn color="blue darken-1" flat v-else @click="editItem">Valider</v-btn>
+        </v-card-actions>
+      </v-card>
     </v-flex>
   <v-alert
     v-if='error'
@@ -263,46 +335,47 @@
 /* eslint-disable no-useless-escape */
 import AdminNav from './AdminNav'
 import LevelService from '../services/LevelService'
+import MediaService from '../services/MediaService'
 // import ItemService from '../services/ItemService'
 
 export default {
   components: {
-    // Panel,
     AdminNav
   },
   data () {
     return {
-      panel: true,
-      name: this.$store.state.user.name,
-      course: '',
-      dialog: false,
-      error: '',
-      dialogError: '',
-      deleteWarning: false,
-      deleteFL: false,
-      deleteSL: false,
-      deletinglevel: {},
-      firstLevels: [],
-      secondLevels: [],
-      items: [],
-      level: 'firstLevel',
-      levelIndex: '',
       activeFL: 0,
       currentFL: {},
       currentSL: {},
       currentItem: {},
-      position: 0,
-      positionItem: 0,
+      course: '',
+      categoryTypes: ['Voix', 'Corps', 'Sérénité', 'Détente'],
+      defaultlevel: {
+        name: ''
+      },
+      deleteWarning: false,
+      deleteFL: false,
+      deleteSL: false,
+      deletinglevel: {},
+      dialog: false,
+      dialogError: '',
+      error: '',
       editingIndex: -1,
       editing: {
         name: '',
         category: ''
       },
-      defaultlevel: {
-        name: ''
-      },
-      categoryTypes: ['Voix', 'Corps', 'Sérénité', 'Détente'],
-      itemTypes: ['Audio Guide', 'Audio Coach', 'Enregistrement Audio', 'Enregistrement Video', 'Lecture Audio', 'Lecture Video', 'Texte Liant', 'Texte Commentaire', 'Test Questionnaire', 'Texte Exercice', 'Photos Exercice', 'Texte Notes', 'Video Coach']
+      firstLevels: [],
+      items: [],
+      itemTypes: ['Audio Guide', 'Audio Coach', 'Enregistrement Audio', 'Enregistrement Video', 'Lecture Audio', 'Lecture Video', 'Texte Liant', 'Texte Commentaire', 'Test Questionnaire', 'Texte Exercice', 'Photos Exercice', 'Texte Notes', 'Video Coach'],
+      level: 'firstLevel',
+      levelIndex: '',
+      medias: [],
+      name: this.$store.state.user.name,
+      panel: true,
+      // position: 0,
+      // positionItem: 0,
+      secondLevels: []
     }
   },
   computed: {
@@ -310,7 +383,7 @@ export default {
       return this.editingIndex === -1 ? 'Créer un niveau ': 'Modifier le niveau n°'
     },
     levelNum () {
-      return this.level === 'firstLevel' ? '2': '3'
+      return this.level === 'firstLevel' ? '2': 'item'
     }
   },
   watch: {
@@ -322,14 +395,17 @@ export default {
       this.getFirstLevels()
     },
     'currentSL' () {
-      console.log(this.currentSL.name)
+      // console.log(this.currentSL.name)
+    },
+    'currentItem' () {
+      // console.log(this.currentItem)
     }
   },
   created () {
     // this.getCourseId()
     this.setCourse()
     this.getFirstLevels()
-    console.log(this.currentSL)
+    this.getMedias()
   },
   mounted () {
     if (localStorage.name) {
@@ -340,13 +416,33 @@ export default {
     }
   },
   methods: {
-    addItem(){
-      this.level = 'itemCreation'
-      this.dialog = true
+    async getMedias () {
+      try {
+        const medias = await MediaService.getMedias()
+        this.medias = Object.keys(medias.data).map((key) => {
+          return medias.data[key]
+        })
+        // this.medias.forEach( media => media.updatedAt = new Date(media.updatedAt).toLocaleDateString("fr-FR"))
+      } catch (e) {
+        this.error = e.response.data.error
+      }
     },
     activeSL(fl,sl) {
       this.currentFL = fl
       this.currentSL = sl
+      if(this.currentSL.items.length !== 0) {
+        this.activeItem(this.currentSL.items[0]) // Define the currentItem and add to his content his mediaName
+        // this.currentItem = this.currentSL.items[0]
+      } else {
+        this.currentItem = null
+      }
+    },
+    activeItem(item) {
+      this.level = ''
+      this.currentItem = item
+      for(let i = 0; i < this.currentItem.content.length; i++) {
+        this.currentItem.content[i].mediaName = this.medias.find(x => x._id == this.currentItem.content[i]._mediaIn).name
+      }
     },
     setCourse() {
       this.course = 'Niveau ' + this.$route.params.level
@@ -459,23 +555,34 @@ export default {
         }
       }
     },
-    editItem (item) {
-      this.currentFL = this.firstLevels.find(x => x.secondLevels.find(x => x.items.find(x => x._id === item._id)))
-      this.currentSL = this.currentFL.secondLevels.find(x => x.items.find(x => x._id === item._id))
-      this.editingIndex = this.currentSL.items.indexOf(item)
-      this.editing = Object.assign({}, item)
-      this.level = 'item'
-      this.dialog = true
+    addItem(){
+      this.currentItem = {}
+      this.editingIndex = -1
+      this.level = 'newItem'
+    },
+    editItem () {
+      this.editingIndex = 1
+      this.saveItem()
     },
     async saveItem () {
       if (this.editingIndex > -1) {
         try {
-          const editing = await LevelService.editItem({
-            _id: this.editing._id,
-            name: this.editing.name
+          for(let i = 0; i < this.currentItem.content.length; i++) {
+            this.currentItem.content[i]._mediaIn = this.medias.find(x => x.name == this.currentItem.content[i].mediaName)._id
+          }
+          const editedItem = await LevelService.editItem({
+            _id: this.currentItem._id,
+            name: this.currentItem.name,
+            type: this.currentItem.type,
+            consigne: this.currentItem.consigne,
+            conclusion: this.currentItem.conclusion,
+            leftButton: this.currentItem.leftButton,
+            rightButton: this.currentItem.rightButton,
+            content: this.currentItem.content
           })
-          if (editing) {
-            Object.assign(this.currentSL.items[this.editingIndex], this.editing)
+          if (editedItem) {
+            Object.assign(this.currentItem, editedItem)
+            this.editingIndex = -1
             this.close()
           } else {
             this.dialogError = 'Modification non prise en compte.'
@@ -486,13 +593,18 @@ export default {
       } else {
         try {
           const res = await LevelService.createItem({
-            name: this.editing.name,
-            type: this.editing.type,
-            _secondLevel: this.currentSL._id,
+            _id: this.currentItem._id,
+            name: this.currentItem.name,
+            type: this.currentItem.type,
+            consigne: this.currentItem.consigne,
+            conclusion: this.currentItem.conclusion,
+            leftButton: this.currentItem.leftButton,
+            rightButton: this.currentItem.rightButton,
+            content: this.currentItem.content,
+            _secondLevel: this.currentSL._id
             // position: this.positionItem
           })
           if (res.data.secondlevel) {
-            console.log(res.data.secondlevel);
             // this.firstLevels.find(x => x._id === res.data.firstlevel._id).secondLevels = res.data.firstlevel.secondLevels
             this.currentSL = res.data.secondlevel
             this.close()
@@ -500,8 +612,8 @@ export default {
             this.dialogError = 'Modification non prise en compte.'
           }
         } catch (error) {
-          // this.dialogError = error.response.data.errors
-          this.dialogError = 'Impossible de rajouter ce niveau.'
+          this.dialogError = error.response.data.errors
+          // this.dialogError = 'Impossible de rajouter ce niveau.'
         }
       }
     },
@@ -613,7 +725,17 @@ export default {
   box-shadow: none;
 }
 #treeLevel {
+  overflow-y: scroll;
+  position: absolute;
+  top: 0px;
+  bottom: 0;
   min-width: 256px;
+}
+#items{
+  padding-left: 2em;
+  padding-right: 2em;
+  width: 100%;
+  margin-left: auto;
 }
 .firstLevelList {
   padding-left: 2em;

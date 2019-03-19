@@ -124,7 +124,7 @@
 <script>
 /* eslint-disable no-useless-escape */
 import AdminNav from './AdminNav'
-import AdminService from '../services/AdminService'
+import MediaService from '../services/MediaService'
 import mediaUpload from './mediaUpload'
 import imageUpload from './imageUpload'
 
@@ -198,7 +198,7 @@ export default {
   methods: {
     async getMedias () {
       try {
-        const medias = await AdminService.getMedias()
+        const medias = await MediaService.getMedias()
         this.medias = Object.keys(medias.data).map((key) => {
           return medias.data[key]
         })
@@ -220,7 +220,7 @@ export default {
       var conf = confirm('Êtes vous sûr de vouloir supprimer ce media ?')
       if (conf) {
         try {
-          const deleted = await AdminService.deleteMedia(this.editedItem._id)
+          const deleted = await MediaService.deleteMedia(this.editedItem._id)
           if (deleted) {
             this.medias.splice(index, 1)
           }
@@ -249,7 +249,7 @@ export default {
       // }
       if (this.editedIndex > -1) { // Edit media case
         try {
-          const edited = await AdminService.editMedia({
+          const edited = await MediaService.editMedia({
             _id: this.editedItem._id,
             name: this.editedItem.name,
             type: this.editedItem.type,
@@ -268,7 +268,7 @@ export default {
         }
       } else { // New media case
         try {
-          const res = await AdminService.createMedia({
+          const res = await MediaService.createMedia({
             name: this.editedItem.name,
             type: this.editedItem.type,
             link: this.editedItem.link
@@ -290,7 +290,7 @@ export default {
     async uploadMedia() {
       this.saving = true
       try {
-        const mediaUrl = await AdminService.mediaUpload(this.editedItem.link.formData)
+        const mediaUrl = await MediaService.mediaUpload(this.editedItem.link.formData)
         this.savedMedia()
         return mediaUrl.data
       } catch (error) {
