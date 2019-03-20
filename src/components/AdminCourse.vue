@@ -14,6 +14,7 @@
               <v-text-field
                 v-if=""
                 v-model="editing.name"
+                :value="editing.name"
                 label="Nom du niveau"
                 autocomplete="false"
                 autofocus
@@ -68,7 +69,7 @@
       </v-toolbar>
 
       <v-expansion-panel
-        :value="Array(5).fill(true)"
+        :value="Array(this.firstLevels.length).fill(true)"
         expand
       >
         <v-expansion-panel-content
@@ -77,26 +78,29 @@
           class="firstLevelList"
         >
           <template v-slot:header>
-            <div class="text-primary">
+            <div class="text-primary firstLevel">
               <h3><v-icon class="text-primary">crop_square</v-icon>
                 {{firstLevel.name}}
-                <v-btn
-                  icon
-                  ripple
-                  small
-                  @click="editFirstLevel(firstLevel)"
-                >
-                  <v-icon class="hover-icon" color="grey">edit</v-icon>
-                </v-btn>
-                <v-btn
-                  icon
-                  ripple
-                  small
-                  @click="tryDeleteFirstLevel(firstLevel)"
-                >
-                  <v-icon class="hover-icon" color="grey">delete</v-icon>
-                </v-btn>
+
               </h3>
+              <v-btn
+                class="hover-icon"
+                icon
+                ripple
+                small
+                @click="editFirstLevel(firstLevel)"
+              >
+                <v-icon color="grey">edit</v-icon>
+              </v-btn>
+              <v-btn
+                class="hover-icon"
+                icon
+                ripple
+                small
+                @click="tryDeleteFirstLevel(firstLevel)"
+              >
+                <v-icon color="grey">delete</v-icon>
+              </v-btn>
             </div>
           </template>
           <v-list>
@@ -362,8 +366,8 @@ export default {
       error: '',
       editingIndex: -1,
       editing: {
-        name: '',
-        category: ''
+        // name: '',
+        // category: ''
       },
       firstLevels: [],
       items: [],
@@ -467,7 +471,8 @@ export default {
     },
     addFirstLevel() {
       this.dialog = true,
-      this.level = 'firstLevel'
+      this.level = 'firstLevel',
+      this.editing = {}
     },
     async saveFirstLevel () {
       if (this.editingIndex > -1) {
@@ -498,8 +503,8 @@ export default {
             this.dialogError = 'Modification non prise en compte.'
           }
         } catch (error) {
-          this.dialogError = error.response.data.errors
-          // this.dialogError = 'Impossible de rajouter ce niveau.'
+          // this.dialogError = error.response.data.errors
+          this.dialogError = 'Impossible de rajouter ce niveau.'
         }
       }
     },
@@ -764,11 +769,16 @@ export default {
     display: block;
   }
 }
-h3{
+.firstLevel{
   white-space: nowrap;
+  display: flex;
+  & h3 {
+    overflow: auto;
+    text-overflow: ellipsis;
+  }
 }
 .v-btn--icon.v-btn--small {
-  margin: 1px;
+  margin: 0 1px;
 }
 
 .theme--light.v-list .v-list__group--active:after, .theme--light.v-list .v-list__group--active:before {
@@ -796,5 +806,8 @@ ul {
 .active-item{
   color: $primary;
   font-weight: bolder;
+}
+.v-btn--small {
+  height: 2em;
 }
 </style>

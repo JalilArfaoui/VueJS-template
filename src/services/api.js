@@ -23,9 +23,12 @@ export default () => {
   })
 
   // before a response is returned stop nprogress
-  instance.interceptors.response.use(response => {
+  instance.interceptors.response.use(function (response) {
     NProgress.done()
     return response
+  }, function (error) {
+    NProgress.done()
+    return Promise.reject(error)
   })
 
   return instance

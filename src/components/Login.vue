@@ -187,7 +187,6 @@ export default {
           } else if (state.data === 'Activé') {
             this.newUser = false
             this.confirmedUser = true
-            console.log(this.$refs.password.$refs.input)
             this.$refs.password.$refs.input.focus()
           }
         }
