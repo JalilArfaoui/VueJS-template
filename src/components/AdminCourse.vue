@@ -217,21 +217,30 @@
                   autocomplete="true"
                   >
                 </v-text-field>
-                <div
+                <!-- <div
                   v-for="(content, n) in this.currentItem.content"
                   :key="n"
-                >
+                > -->
                   <v-select
-                    v-model="content.mediaName"
+                    v-model="currentItem.mediaName"
                     :items="medias"
                     label="Média à afficher"
                     item-text="name"
                   ></v-select>
-                  <v-checkbox
-                    v-model="content.record"
+                  <v-radio-group
+                    v-model="currentItem.record"
+                    row
                     label="L'utilisateur doit-il s'enregistrer ?"
-                  ></v-checkbox>
-                </div>
+                  >
+                    <v-radio label="Non" value="false"></v-radio>
+                    <v-radio label="Audio" value="audio"></v-radio>
+                    <v-radio label="Video" value="video"></v-radio>
+                  </v-radio-group>
+                  <!-- <v-checkbox
+                    v-model="currentItem.record"
+                    label="L'utilisateur doit-il s'enregistrer ?"
+                  ></v-checkbox> -->
+                <!-- </div> -->
 
                 <v-text-field
                   v-model="currentItem.conclusion"
@@ -444,9 +453,7 @@ export default {
     activeItem(item) {
       this.level = ''
       this.currentItem = item
-      for(let i = 0; i < this.currentItem.content.length; i++) {
-        this.currentItem.content[i].mediaName = this.medias.find(x => x._id == this.currentItem.content[i]._mediaIn).name
-      }
+      this.currentItem.mediaName = this.medias.find(x => x._id == this.currentItem._mediaIn).name
     },
     setCourse() {
       this.course = 'Niveau ' + this.$route.params.level
@@ -572,18 +579,19 @@ export default {
     async saveItem () {
       if (this.editingIndex > -1) {
         try {
-          for(let i = 0; i < this.currentItem.content.length; i++) {
-            this.currentItem.content[i]._mediaIn = this.medias.find(x => x.name == this.currentItem.content[i].mediaName)._id
-          }
+
+          this.currentItem._mediaIn = this.medias.find(x => x.name == this.currentItem.mediaName)._id
+
           const editedItem = await LevelService.editItem({
             _id: this.currentItem._id,
             name: this.currentItem.name,
             type: this.currentItem.type,
             consigne: this.currentItem.consigne,
+            _mediaIn: this.currentItem._mediaIn,
+            record: this.currentItem.record,
             conclusion: this.currentItem.conclusion,
             leftButton: this.currentItem.leftButton,
             rightButton: this.currentItem.rightButton,
-            content: this.currentItem.content
           })
           if (editedItem) {
             Object.assign(this.currentItem, editedItem)
@@ -602,10 +610,11 @@ export default {
             name: this.currentItem.name,
             type: this.currentItem.type,
             consigne: this.currentItem.consigne,
+            _mediaIn: this.currentItem._mediaIn,
+            record: this.currentItem.record,
             conclusion: this.currentItem.conclusion,
             leftButton: this.currentItem.leftButton,
             rightButton: this.currentItem.rightButton,
-            content: this.currentItem.content,
             _secondLevel: this.currentSL._id
             // position: this.positionItem
           })
