@@ -1,6 +1,15 @@
 <template>
-  <v-layout justify-center>
+  <v-layout id="login" row d-flex justify-center align-center>
     <v-flex lg6>
+      <v-img
+        src="../assets/jobs.jpg"
+        contain
+        max-height="100vh"
+      ></v-img>
+    </v-flex>
+  <!-- </v-layout>
+  <v-layout justify-center lg6> -->
+    <v-flex lg6 class="">
       <v-alert
         v-show = "authRequired"
         type="error"
@@ -20,94 +29,96 @@
         Vous êtes déjà authentifié avec l'adresse {{userEmail}}
       </v-alert>
 
-      <panel title="Connexion">
-      <slot>
-        <v-form
-        name="login-form"
-        autocomplete="false"
-        v-model="valid"
-        ref="form"
-        v-on:keyup.enter="submit"
-        >
-          <v-text-field
-            label="Email"
-            type="email"
-            name="email"
-            v-model="email"
-            required
-            :rules="emailRules"
-            autocomplete="false"
-            v-on:keyup.enter="isUser"
-            >
-          </v-text-field>
+      <panel
+        id="login-box"
+        title="Connexion">
+        <slot>
+          <v-form
+          name="login-form"
+          autocomplete="false"
+          v-model="valid"
+          ref="form"
+          v-on:keyup.enter="submit"
+          >
+            <v-text-field
+              label="Email"
+              type="email"
+              name="email"
+              v-model="email"
+              required
+              :rules="emailRules"
+              autocomplete="false"
+              v-on:keyup.enter="isUser"
+              >
+            </v-text-field>
+            <br>
+            <v-text-field
+              v-show="confirmedUser"
+              label="Mot de passe"
+              type="password"
+              name="password"
+              ref="password"
+              v-model="password"
+              required
+              :rules="passwordRules"
+              :counter="34"
+              autofocus
+              v-on:keyup.enter="login"
+              >
+            </v-text-field>
+            <!-- <router-link
+              v-show="confirmedUser"
+              name="resetPwd"
+              to="/resetPwd"
+              tag="pwdReset"
+              @click="pwdReset"
+              > -->
+            <a
+              v-show="confirmedUser"
+              @click="reseting ? '' : pwdReset()">
+              Mot de passe oublié ?
+            </a>
+            <!-- </router-link> -->
+          </v-form>
           <br>
-          <v-text-field
-            v-show="confirmedUser"
-            label="Mot de passe"
-            type="password"
-            name="password"
-            ref="password"
-            v-model="password"
-            required
-            :rules="passwordRules"
-            :counter="34"
-            autofocus
-            v-on:keyup.enter="login"
+          <v-alert
+            v-if='error'
+            :value="error"
+            type="error"
+            dismissible
+            icon="warning"
+            color="error"
+            outline
             >
-          </v-text-field>
-          <!-- <router-link
+            {{error}}
+          </v-alert>
+          <br>
+          <v-btn
+            v-show="!confirmedUser"
+            dark
+            @click="isUser"
+            class="green">
+            Démarrer
+          </v-btn>
+          <v-btn
             v-show="confirmedUser"
-            name="resetPwd"
-            to="/resetPwd"
-            tag="pwdReset"
-            @click="pwdReset"
-            > -->
-          <a
-            v-show="confirmedUser"
-            @click="reseting ? '' : pwdReset()">
-            Mot de passe oublié ?
-          </a>
-          <!-- </router-link> -->
-        </v-form>
-        <br>
-        <v-alert
-          v-if='error'
-          :value="error"
-          type="error"
-          dismissible
-          icon="warning"
-          color="error"
-          outline
-          >
-          {{error}}
-        </v-alert>
-        <br>
-        <v-btn
-          v-show="!confirmedUser"
-          dark
-          @click="isUser"
-          class="green">
-          Démarrer
-        </v-btn>
-        <v-btn
-          v-show="confirmedUser"
-          :disabled="!valid"
-          color="primary"
-          @click="login"
-          >
-          Connexion
-        </v-btn>
-        <!-- <v-btn
-          v-show="newUser"
-          dark
-          @click="demarrer"
-          class="green">
-          Démarrer
-        </v-btn> -->
+            :disabled="!valid"
+            color="primary"
+            @click="login"
+            >
+            Connexion
+          </v-btn>
+          <!-- <v-btn
+            v-show="newUser"
+            dark
+            @click="demarrer"
+            class="green">
+            Démarrer
+          </v-btn> -->
 
-      </slot>
-    </panel>
-</v-flex>
+        </slot>
+      </panel>
+  </v-flex>
 </v-layout>
 </template>
 
@@ -243,5 +254,11 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+.v-image {
+    background-color: #000;
+  }
+#login-box{
+  margin: 0 10%;
+}
 </style>
