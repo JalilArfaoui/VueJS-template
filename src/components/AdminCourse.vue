@@ -396,7 +396,7 @@ export default {
       return this.editingIndex === -1 ? 'Créer un niveau ': 'Modifier le niveau n°'
     },
     levelNum () {
-      return this.level === 'firstLevel' ? '2': 'item'
+      return this.level === 'firstLevel' ? '2': '3'
     }
   },
   watch: {
