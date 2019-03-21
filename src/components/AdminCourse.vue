@@ -375,8 +375,8 @@ export default {
       error: '',
       editingIndex: -1,
       editing: {
-        // name: '',
-        // category: ''
+        name: '',
+        category: ''
       },
       firstLevels: [],
       items: [],
@@ -523,6 +523,7 @@ export default {
       this.dialog = true
     },
     addSecondLevel(firstLevel) {
+      this.editing = {}
       this.dialog = true,
       this.level = 'secondLevel'
       this.currentFL = firstLevel
