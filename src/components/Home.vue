@@ -1,80 +1,69 @@
-<template>
-  <div>
+<template >
+  <div >
     <v-layout justify-space-around column>
-      <!-- <v-layout id="admin-layout" justify-space-around column> -->
       <v-toolbar flat color="white">
         <v-toolbar-title>Circuits</v-toolbar-title>
         <a @click="logout">Disconnect</a>
-        <!-- <v-divider
-        class="mx-2"
-        inset
-        vertical
-        ></v-divider>
-        <v-spacer></v-spacer> -->
       </v-toolbar>
       <v-tabs
-        v-model="activeFL"
-        centered
-        slider-color="blue"
-        grow
+        color="cyan"
+        dark
+        slider-color="yellow"
       >
         <v-tab
-        v-for="(firstLevel, index) in firstLevels"
-        :key="index"
-        ripple
+          v-for="(course,n) in courses"
+          :key="n"
+          ripple
+          @click="activeCourse(course)"
         >
-          Niveau {{ index + 1 }}
-          </br>
-          {{firstLevel.name}}
+          {{ course }}
         </v-tab>
       </v-tabs>
-      <v-tabs-items v-model="activeFL">
-        <v-tab-item
-          v-for="(firstLevel, index) in firstLevels"
-          :key="index"
-        >
-        <v-expansion-panel focusable>
-          <v-expansion-panel-content
-          v-for="(secondLevel, indexSL) in firstLevel.secondLevels"
-          :key="indexSL"
-          >
-            <div
-              slot="header"
+        <div>
+          <ul>
+            <firstlevelComponent
+              v-for="firstLevel in firstLevels"
+              :key="firstLevel._id"
+              :firstLevel="firstLevel"
+            />
+
+          </ul>
+        </div>
+            <!-- <v-tabs-items
+              v-model="currentCourse"
             >
-              {{secondLevel.name}}
-            </div>
-            <v-card>
-              <v-container
-                fluid
-                grid-list-lg
-              >
-                <v-layout align-start column fill-height>
-                  <v-flex xs4
-                    v-for="(item, indexItem) in secondLevel.items"
-                    :key="indexItem"
-                  >
-                    <v-card mt3>
-                      <v-card-title primary-title>
-                        <div>
-                          <div class="headline">{{indexItem}}. {{item.name}}</div>
-                          <div v-if="item.type=='Texte Liant'" class="">{{item.content.field}}</div>
-                          <div v-else-if="item.type=='Lecture Video'" class="">
-                            <VideoPlayer v-bind:activeVideo="item.content.field"></VideoPlayer>
-                          </div>
-                          <div v-else-if="item.type=='Lecture Audio'" class="">
-                            <AudioPlayer v-bind:activeAudio="item.content.field"></AudioPlayer>
-                          </div>
-                        </div>
-                      </v-card-title>
-                    </v-card>
-                  </v-flex>
-                </v-layout>
-              </v-container>
-            </v-card>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-        </v-tab-item>
-      </v-tabs-items>
+              <v-tab-item
+                v-for="(course,n) in courses"
+                :key="n"
+              > -->
+
+          <!-- </v-tab-item>
+        </v-tabs-items> -->
+      <!-- </v-tabs> -->
+        <!-- <ul>
+        <li v-for="course in courses">
+          {{course}}
+          <ul>
+            <firstlevelComponent
+              v-for="firstLevel in firstLevels[course]"
+              :key="firstLevel._id"
+              :firstLevel="firstLevel"
+            />
+          </ul>
+        </li>
+
+  		</ul> -->
+      <v-alert
+        v-if='error'
+        :value="error"
+        type="error"
+        dismissible
+        icon="warning"
+        color="error"
+        outline
+        >
+        {{error}}
+      </v-alert>
     </v-layout>
   </div>
 </template>
@@ -82,38 +71,26 @@
 <script>
 /* eslint-disable no-useless-escape */
 import LevelService from '../services/LevelService'
-import VideoPlayer from './videoPlayer'
-import AudioPlayer from './audioPlayer'
+import firstlevelComponent from './firstlevelComponent'
 // import ItemService from '../services/ItemService'
 
 export default {
   components: {
-    VideoPlayer,
-    AudioPlayer
+    firstlevelComponent
   },
   data () {
     return {
       name: this.$store.state.user.name,
-      dialog: false,
-      firstLevels: [],
-      secondLevels: [],
-      items: [],
-      level: 'firstLevel',
-      levelIndex: '',
-      activeFL: '',
+      currentCourse: 'Niveau 1',
       currentFL: {},
       currentSL: {},
-      currentItem: {},
-      position: 0,
-      positionItem: 0,
-      editingIndex: -1,
-      editing: {
-        name: ''
-      },
-      defaultlevel: {
-        name: ''
-      },
-      itemTypes: ['Audio Guide', 'Audio Coach', 'Enregistrement Audio', 'Enregistrement Video', 'Lecture Audio', 'Lecture Video', 'Texte Liant', 'Texte Commentaire', 'Test Questionnaire', 'Texte Exercice', 'Photos Exercice', 'Texte Notes', 'Video Coach']
+      currentItem: {},courses: ['Niveau 1', 'Niveau 2', 'Niveau 3'],
+      dialog: false,
+      error: '',
+      secondLevels: [],
+      items: [],
+      itemTypes: ['Audio Guide', 'Audio Coach', 'Enregistrement Audio', 'Enregistrement Video', 'Lecture Audio', 'Lecture Video', 'Texte Liant', 'Texte Commentaire', 'Test Questionnaire', 'Texte Exercice', 'Photos Exercice', 'Texte Notes', 'Video Coach'],
+      firstLevels: []
     }
   },
   computed: {
@@ -124,10 +101,20 @@ export default {
   watch: {
     dialog (val) {
       val || this.close()
+    },
+    'currentCourse' () {
+      this.getFirstLevels()
+      console.log(this.currentCourse)
+      console.log(this.firstLevels);
     }
   },
-  created () {
+  beforeMount () {
     this.getFirstLevels()
+    console.log(this.firstLevels)
+  },
+  created () {
+    // this.getFirstLevels ()
+    // console.log(this.firstLevels);
   },
   mounted () {
     if (localStorage.name) {
@@ -136,8 +123,12 @@ export default {
     if (localStorage.setUser) {
       this.email = localStorage.setUser
     }
+    // this.activeCourse('Niveau 1')
   },
   methods: {
+    activeCourse(currentCourse) {
+      this.currentCourse = currentCourse
+    },
     logout() {
       this.$store.dispatch('setClient', null)
       this.$store.dispatch('setToken', null)
@@ -146,14 +137,18 @@ export default {
         .then(() => this.$router.push('/login'))
     },
     async getFirstLevels () {
-      try {
-        const firstLevels = await LevelService.getFirstLevels()
-        this.firstLevels = Object.keys(firstLevels.data).map((key) => {
-          return firstLevels.data[key]
-        })
-      } catch (e) {
-        this.error = e.response.data.error
-      }
+        // for (let course of this.courses) {
+          try {
+            let tempFirstLevels = await LevelService.getFirstLevels({
+              course: this.currentCourse
+            })
+            this.firstLevels = Object.keys(tempFirstLevels.data).map((key) => {
+              return tempFirstLevels.data[key]
+            })
+          } catch (e) {
+            this.error = e.response
+          }
+        // }
     }
   }
 }
