@@ -1,14 +1,16 @@
 <template >
-  <div >
+  <div>
+    <page-header />
     <v-layout justify-space-around column>
-      <v-toolbar flat color="white">
+      <!-- <v-toolbar flat color="white">
         <v-toolbar-title>Circuits</v-toolbar-title>
         <a @click="logout">Disconnect</a>
-      </v-toolbar>
+      </v-toolbar> -->
       <v-tabs
-        color="cyan"
-        dark
-        slider-color="yellow"
+        color="white"
+        light
+        slider-color="purple accent-4"
+        fixed-tabs
       >
         <v-tab
           v-for="(course,n) in courses"
@@ -36,6 +38,7 @@
 
 <script>
 /* eslint-disable no-useless-escape */
+import PageHeader from './Header.vue'
 import LevelService from '../services/LevelService'
 import firstlevelComponent from './firstlevelComponent'
 import alertBox from './alertBox'
@@ -43,6 +46,7 @@ import alertBox from './alertBox'
 
 export default {
   components: {
+    PageHeader,
     firstlevelComponent,
     alertBox
   },

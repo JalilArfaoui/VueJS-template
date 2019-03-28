@@ -14,12 +14,12 @@
 </template>
 
 <script>
-// import PageHeader from './components/Header.vue'
+import PageHeader from './components/Header.vue'
 // import AdminNav from '@/components/AdminNav.vue'
 export default {
   name: 'app',
   components: {
-    // PageHeader
+    PageHeader
     // AdminNav
   }
 }

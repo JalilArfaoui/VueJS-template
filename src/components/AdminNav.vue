@@ -20,7 +20,7 @@ export default {
         //   title: 'Menu Admin'
         // },
         {
-          href: '/admin',
+          href: '/',
           title: 'Talk It Easy',
           icon: 'fab fa-pied-piper-hat'
         },
