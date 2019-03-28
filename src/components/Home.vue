@@ -26,44 +26,10 @@
               :key="firstLevel._id"
               :firstLevel="firstLevel"
             />
-
           </ul>
         </div>
-            <!-- <v-tabs-items
-              v-model="currentCourse"
-            >
-              <v-tab-item
-                v-for="(course,n) in courses"
-                :key="n"
-              > -->
-
-          <!-- </v-tab-item>
-        </v-tabs-items> -->
-      <!-- </v-tabs> -->
-        <!-- <ul>
-        <li v-for="course in courses">
-          {{course}}
-          <ul>
-            <firstlevelComponent
-              v-for="firstLevel in firstLevels[course]"
-              :key="firstLevel._id"
-              :firstLevel="firstLevel"
-            />
-          </ul>
-        </li>
-
-  		</ul> -->
-      <v-alert
-        v-if='error'
-        :value="error"
-        type="error"
-        dismissible
-        icon="warning"
-        color="error"
-        outline
-        >
-        {{error}}
-      </v-alert>
+      <alertBox
+      :error="error"/>
     </v-layout>
   </div>
 </template>
@@ -72,11 +38,13 @@
 /* eslint-disable no-useless-escape */
 import LevelService from '../services/LevelService'
 import firstlevelComponent from './firstlevelComponent'
+import alertBox from './alertBox'
 // import ItemService from '../services/ItemService'
 
 export default {
   components: {
-    firstlevelComponent
+    firstlevelComponent,
+    alertBox
   },
   data () {
     return {
@@ -104,17 +72,15 @@ export default {
     },
     'currentCourse' () {
       this.getFirstLevels()
-      console.log(this.currentCourse)
-      console.log(this.firstLevels);
     }
   },
   beforeMount () {
-    this.getFirstLevels()
-    console.log(this.firstLevels)
+    // this.getFirstLevels()
+    // console.log(this.firstLevels)
   },
   created () {
-    // this.getFirstLevels ()
-    // console.log(this.firstLevels);
+    this.getFirstLevels ()
+    console.log(this.firstLevels);
   },
   mounted () {
     if (localStorage.name) {
@@ -129,26 +95,25 @@ export default {
     activeCourse(currentCourse) {
       this.currentCourse = currentCourse
     },
-    logout() {
-      this.$store.dispatch('setClient', null)
-      this.$store.dispatch('setToken', null)
-      this.$store.dispatch('setAdmin', null)
-      this.$store.dispatch('setUser', null)
-        .then(() => this.$router.push('/login'))
-    },
     async getFirstLevels () {
         // for (let course of this.courses) {
           try {
             let tempFirstLevels = await LevelService.getFirstLevels({
               course: this.currentCourse
             })
-            this.firstLevels = Object.keys(tempFirstLevels.data).map((key) => {
-              return tempFirstLevels.data[key]
-            })
+            this.firstLevels = Object.keys(tempFirstLevels.data).map((key) => { return tempFirstLevels.data[key]})
+            console.log(this.firstLevels)
           } catch (e) {
             this.error = e.response
           }
         // }
+    },
+    logout() {
+      this.$store.dispatch('setClient', null)
+      this.$store.dispatch('setToken', null)
+      this.$store.dispatch('setAdmin', null)
+      this.$store.dispatch('setUser', null)
+        .then(() => this.$router.push('/login'))
     }
   }
 }

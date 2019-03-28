@@ -107,12 +107,15 @@
             <v-list-tile
               v-for="(secondLevel, indexSL) in firstLevel.secondLevels"
               :key="indexSL"
-              @click=""
               class="secondLevelList"
+              :class="{ 'activeSL': secondLevel === currentSL }"
             >
             <!-- :class="secondLevel.path === $route.path ? 'active-secondlevel' : ''" -->
                 <v-list-tile-content>
-                  <v-list-tile-title class="grey-text" @click="activeSL(firstLevel, secondLevel)">
+                  <v-list-tile-title
+                    class="grey-text"
+                    @click="activeSL(firstLevel, secondLevel)"
+                  >
                     <span v-if="secondLevel.category">[{{ secondLevel.category }}] </span>{{ secondLevel.name }}
                   </v-list-tile-title>
                 </v-list-tile-content>
@@ -163,26 +166,30 @@
       <p class="text-primary">
         <b>{{ this.currentFL.name }}></b>{{ this.currentSL.name }}
       </p>
-      <v-tabs
+      <!-- <v-tabs
         fixed-tabs
         show-arrows
         justify-space-between
         hide-slider
-      >
-        <v-tab
+      > -->
+        <!-- <v-tab -->
+      <ul>
+        <li
           v-for="(item, itemIndex) in this.currentSL.items"
           :key="itemIndex"
           ripple
-          active-class="active-item"
           class="item text-grey"
-          @click="activeItem(item)"
+          @click="activeItem(item, itemIndex)"
+          :class="{ 'active-item': activeIndex === itemIndex }"
         >
           {{item.name}}
-        </v-tab>
-        <v-tab
+        </li>
+        <!-- </v-tab>
+        <v-tab -->
+        <li
           ripple
           active-class="active-item"
-          class="item text-grey"
+          class="text-grey"
         >
           <v-btn
             small
@@ -192,8 +199,10 @@
           >
             <v-icon>add</v-icon>
           </v-btn>
-        </v-tab>
-      </v-tabs>
+        </li>
+      </ul>
+        <!-- </v-tab>
+      </v-tabs> -->
       <v-card v-if="this.currentItem">
         <v-card-text>
           <v-container grid-list-md>
@@ -358,6 +367,7 @@ export default {
   data () {
     return {
       activeFL: 0,
+      activeIndex: 0,
       currentFL: {},
       currentSL: {},
       currentItem: {},
@@ -443,18 +453,25 @@ export default {
     activeSL(fl,sl) {
       this.currentFL = fl
       this.currentSL = sl
+      // this.activeItem(secondLevel.items[0])
       if(this.currentSL.items.length !== 0) {
-        this.activeItem(this.currentSL.items[0]) // Define the currentItem and add to his content his mediaName
+        this.activeItem(this.currentSL.items[0], 0) // Define the currentItem and add to his content his mediaName
         // this.currentItem = this.currentSL.items[0]
       } else {
         this.currentItem = null
       }
     },
-    activeItem(item) {
-      this.level = ''
+    activeItem(item, activeIndex) {
+      // this.level = ''
       this.currentItem = item
-      this.currentItem.mediaName = this.medias.find(x => x._id == this.currentItem._mediaIn).name
+      this.activeIndex = activeIndex
+      if(this.medias.find(x => x._id == this.currentItem._mediaIn)) {
+        this.currentItem.mediaName = this.medias.find(x => x._id == this.currentItem._mediaIn).name
+      }
     },
+    // activeFirstItem(secondLevel) {
+    //   this.activeItem(secondLevel.items[0])
+    // },
     setCourse() {
       this.course = 'Niveau ' + this.$route.params.level
     },
@@ -507,7 +524,7 @@ export default {
             this.firstLevels.push(res.data.firstLevel)
             this.close()
           } else {
-            this.dialogError = 'Modification non prise en compte.'
+            this.dialogError = 'Création de niveau non prise en compte.'
           }
         } catch (error) {
           // this.dialogError = error.response.data.errors
@@ -555,8 +572,6 @@ export default {
             // position: this.position
           })
           if (res.data.firstlevel) {
-            // console.log(this.activeFL)
-            // this.secondLevels.push(res.data.level)
             this.firstLevels.find(x => x._id === res.data.firstlevel._id).secondLevels = res.data.firstlevel.secondLevels
             this.close()
           } else {
@@ -569,9 +584,12 @@ export default {
       }
     },
     addItem(){
-      this.currentItem = {}
+      // this.currentItem = {}
       this.editingIndex = -1
       this.level = 'newItem'
+      this.currentSL.items.push({name: 'Nouveau'}) // Display a new item in the header list
+      this.activeItem(this.currentSL.items[this.currentSL.items.length - 1], this.currentSL.items.length - 1)
+      // this.currentItem = this.currentSL.items[this.currentSL.items.length - 1]
     },
     editItem () {
       this.editingIndex = 1
@@ -580,9 +598,9 @@ export default {
     async saveItem () {
       if (this.editingIndex > -1) {
         try {
-
-          this.currentItem._mediaIn = this.medias.find(x => x.name == this.currentItem.mediaName)._id
-
+          if(this.medias.find(x => x._id == this.currentItem._mediaIn)) {
+            this.currentItem._mediaIn = this.medias.find(x => x.name == this.currentItem.mediaName)._id
+          }
           const editedItem = await LevelService.editItem({
             _id: this.currentItem._id,
             name: this.currentItem.name,
@@ -599,9 +617,10 @@ export default {
             this.editingIndex = -1
             this.close()
           } else {
-            this.dialogError = 'Modification non prise en compte.'
+            this.dialogError = 'Modifications non prise en compte.'
           }
-        } catch (e) {
+        } catch (error) {
+          // this.dialogError = error.response
           this.dialogError = 'Modification non prise en compte.'
         }
       } else {
@@ -619,9 +638,10 @@ export default {
             _secondLevel: this.currentSL._id
             // position: this.positionItem
           })
-          if (res.data.secondlevel) {
-            // this.firstLevels.find(x => x._id === res.data.firstlevel._id).secondLevels = res.data.firstlevel.secondLevels
-            this.currentSL = res.data.secondlevel
+          if (res.data.firstlevel) {
+            this.firstLevels.find(x => x._id === res.data.firstlevel._id).secondLevels = res.data.firstlevel.secondLevels
+            this.currentSL.items.pop() // Remove the "Nouveau" item in the header list
+            this.currentSL = res.data.firstlevel.secondLevels.find(x => x._id === this.currentSL._id)
             this.close()
           } else {
             this.dialogError = 'Modification non prise en compte.'
@@ -802,8 +822,11 @@ ul {
   background-color: #ECF6FF !important;
   margin: auto !important;
   border-radius: 20px;
+  padding: 10px 30px;
 }
-
+.v-list__tile__title{
+  transition: none;
+}
 </style>
 
 <style lang="scss">
@@ -814,8 +837,16 @@ ul {
   flex-direction: row;
 }
 .active-item{
-  color: $primary;
+  color: $primary !important;
   font-weight: bolder;
+}
+.activeSL {
+  color: $primary !important;
+  font-weight: bolder;
+  background-color: #ECF6FF;
+  border-radius: 30px;
+  margin: 0px 10px;
+  transition: .4s cubic-bezier(.25,.8,.5,1);
 }
 .v-btn--small {
   height: 2em;
