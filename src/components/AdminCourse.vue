@@ -784,6 +784,7 @@ export default {
   }
 }
 .secondLevelList {
+  cursor: pointer;
   .hover-icon-sl{
     display: none;
   }
@@ -823,6 +824,7 @@ ul {
   margin: auto !important;
   border-radius: 20px;
   padding: 10px 30px;
+  cursor: pointer;
 }
 .v-list__tile__title{
   transition: none;

@@ -9,7 +9,7 @@
     </v-flex> -->
   <!-- </v-layout>
   <v-layout justify-center lg6> -->
-    <!-- <v-flex lg6 class=""> -->
+    <v-flex lg6 class="">
       <v-alert
         v-show = "authRequired"
         type="error"
@@ -118,7 +118,7 @@
 
         </slot>
       </panel>
-  <!-- </v-flex> -->
+  </v-flex>
 </v-layout>
 </template>
 
