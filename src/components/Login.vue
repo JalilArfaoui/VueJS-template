@@ -1,15 +1,15 @@
 <template>
   <v-layout id="login" row d-flex justify-center align-center>
-    <v-flex lg6>
+    <!-- <v-flex lg6>
       <v-img
         src="../assets/jobs.jpg"
         contain
         max-height="100vh"
       ></v-img>
-    </v-flex>
+    </v-flex> -->
   <!-- </v-layout>
   <v-layout justify-center lg6> -->
-    <v-flex lg6 class="">
+    <!-- <v-flex lg6 class=""> -->
       <v-alert
         v-show = "authRequired"
         type="error"
@@ -118,7 +118,7 @@
 
         </slot>
       </panel>
-  </v-flex>
+  <!-- </v-flex> -->
 </v-layout>
 </template>
 
