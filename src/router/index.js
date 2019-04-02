@@ -9,6 +9,7 @@ import Welcome from '../components/Welcome.vue'
 import ResetPwd from '../components/ResetPwd.vue'
 import Dashboard from '../components/Dashboard.vue'
 import MediaCapture from '../components/MediaCapture.vue'
+import Exercises from '../components/Exercises.vue'
 
 import Admin from '../components/Admin.vue'
 import AdminClients from '../components/AdminClients.vue'
@@ -63,6 +64,14 @@ let router = new Router({
       path: '/dashboard',
       name: 'dashboard',
       component: Dashboard,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/exercises',
+      name: 'exercises',
+      component: Exercises,
       meta: {
         requiresAuth: true
       }

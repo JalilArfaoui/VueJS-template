@@ -1,33 +1,27 @@
 <template>
-  <li>
-    {{ firstLevel.name }}
-    <ul>
-      <li
+  <li class="mb-5">
+    <h2 class="shadow-1 mx-25">{{ firstLevel.name }}</h2>
+    <v-layout row wrap>
+    <!-- <v-flex d-flex class="lvl3"> -->
+      <v-flex
         v-for="secondLevel in firstLevel.secondLevels"
-        >
+        @click="toExercices(secondLevel)"
+        class="pointer"
+        xs4
+        mt-4
+      >
+        <v-img
+          src="../assets/rocket.svg"
+          contain
+          class="disc shadow-1 br-5"
+          width="50%"
+        ></v-img>
         {{ secondLevel.name }}
-        <ul>
-          <li
-            v-for="item in secondLevel.items"
-            >
-            <div>
-              Titre de l'item : {{ item.name }} </br>
-              Type : {{ item.type }} </br>
-              Consigne : {{ item.consigne }} </br>
-              Media : {{ item._mediaIn }} </br>
-                <videoPlayer
-                  v-if="item._mediaIn"
-                  :_videoID="item._mediaIn"
-                />
-              L'utilisateur doit t'il s'enregistrer ? {{ item.record }} </br>
-              Conclusion : {{ item.conclusion }} </br>
-              Bouton gauche : {{ item.leftButton }} </br>
-              Bouton droit : {{ item.rightButton }} </br>
-            </div>
-          </li>
-        </ul>
-      </li>
-    </ul>
+
+      <!-- </div> -->
+      </v-flex>
+    <!-- </v-flex> -->
+    </v-layout>
   </li>
 </template>
 
@@ -43,6 +37,18 @@ export default {
       type: Object,
       required: true
     }
+  },
+  methods: {
+    toExercices (secondLevel) {
+      this.$store.dispatch('setSL', secondLevel)
+        .then(() => this.$router.push('/exercises'))
+    }
   }
 }
 </script>
+<style>
+ul {
+  list-style: none;
+  padding: 0 !important;
+}
+</style>

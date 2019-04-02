@@ -27,6 +27,47 @@ $grey: #808187;
 .bg-secondary{
   background-color: $secondary !important
 }
+.bg-white {
+  background-color: white !important
+}
+.mx-25 {
+  margin-left: 25%;
+  margin-right: 25%;
+}
+.br-1 {
+  border-radius: 1px;
+}
+.br-2 {
+  border-radius: 3px;
+}
+.br-3 {
+  border-radius: 5px;
+}
+.br-4 {
+  border-radius: 10px;
+}
+.br-5 {
+  border-radius: 25px;
+}
+.shadow-1 {
+  box-shadow: 0 4px 8px 0 rgba(82,97,115,0.18);
+}
+.disc{
+  background: #fff;
+  width: 10vw;
+  height: 10vw;
+  border-radius: 5vw;
+  margin: auto;
+}
+.square {
+    background: #fff;
+    width: 10vw;
+    height: 10vw;
+}
+
+.pointer {
+  cursor: pointer;
+}
 // ANIMATIONS
 
 @-webkit-keyframes fadeIn {

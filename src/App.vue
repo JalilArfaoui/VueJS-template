@@ -2,7 +2,6 @@
 <template>
   <div id="app">
     <v-app>
-      <!-- <page-header /> -->
       <main>
         <!-- <AdminNav /> -->
         <v-container fluid>
@@ -14,12 +13,13 @@
 </template>
 
 <script>
-import PageHeader from './components/Header.vue'
-// import AdminNav from '@/components/AdminNav.vue'
+// import PageHeader from './components/Header.vue'
+// import AdminNav from './components/AdminNav.vue'
+
 export default {
   name: 'app',
   components: {
-    PageHeader
+    // PageHeader
     // AdminNav
   }
 }

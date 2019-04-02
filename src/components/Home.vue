@@ -1,27 +1,23 @@
 <template >
   <div>
     <page-header />
-    <v-layout justify-space-around column>
-      <!-- <v-toolbar flat color="white">
-        <v-toolbar-title>Circuits</v-toolbar-title>
-        <a @click="logout">Disconnect</a>
-      </v-toolbar> -->
-      <v-tabs
-        color="white"
-        light
-        slider-color="purple accent-4"
-        fixed-tabs
-      >
-        <v-tab
-          v-for="(course,n) in courses"
-          :key="n"
-          ripple
-          @click="activeCourse(course)"
+    <v-layout justify-space-around row mt-3 px-5>
+      <v-flex sm8>
+        <v-tabs
+          color="white"
+          light
+          slider-color="white"
+          fixed-tabs
         >
-          {{ course }}
-        </v-tab>
-      </v-tabs>
-        <div>
+          <v-tab
+            v-for="(course,n) in courses"
+            :key="n"
+            @click="activeCourse(course)"
+          >
+            {{ course }}
+          </v-tab>
+        </v-tabs>
+        <div class="bg-white br-4 pa-3">
           <ul>
             <firstlevelComponent
               v-for="firstLevel in firstLevels"
@@ -30,6 +26,34 @@
             />
           </ul>
         </div>
+      </v-flex>
+      <v-flex sm4>
+        <!-- <v-tabs
+          color="white"
+          light
+          slider-color="purple accent-4"
+          fixed-tabs
+        >
+          <v-tab
+            v-for="(course,n) in courses"
+            :key="n"
+            ripple
+            @click="activeCourse(course)"
+          >
+            {{ course }}
+          </v-tab>
+        </v-tabs>
+        <div>
+          <ul>
+            <firstlevelComponent
+              v-for="firstLevel in firstLevels"
+              :key="firstLevel._id"
+              :firstLevel="firstLevel"
+            />
+          </ul>
+        </div> -->
+      </v-flex>
+
       <alertBox
       :error="error"/>
     </v-layout>
@@ -101,73 +125,47 @@ export default {
     },
     async getFirstLevels () {
         // for (let course of this.courses) {
-          try {
-            let tempFirstLevels = await LevelService.getFirstLevels({
-              course: this.currentCourse
-            })
-            this.firstLevels = Object.keys(tempFirstLevels.data).map((key) => { return tempFirstLevels.data[key]})
-            console.log(this.firstLevels)
-          } catch (e) {
-            this.error = e.response
-          }
+      try {
+        let tempFirstLevels = await LevelService.getFirstLevels({
+          course: this.currentCourse
+        })
+        this.firstLevels = Object.keys(tempFirstLevels.data).map((key) => { return tempFirstLevels.data[key]})
+      } catch (e) {
+        this.error = e.response
+      }
         // }
-    },
-    logout() {
-      this.$store.dispatch('setClient', null)
-      this.$store.dispatch('setToken', null)
-      this.$store.dispatch('setAdmin', null)
-      this.$store.dispatch('setUser', null)
-        .then(() => this.$router.push('/login'))
     }
+    // logout() {
+    //   this.$store.dispatch('setClient', null)
+    //   this.$store.dispatch('setToken', null)
+    //   this.$store.dispatch('setAdmin', null)
+    //   this.$store.dispatch('setUser', null)
+    //     .then(() => this.$router.push('/login'))
+    // }
   }
 }
 </script>
 
 <style scoped>
-#admin-layout{
+ul {
+  list-style: none;
+  padding: 0 !important;
+  text-align: center;
+}
+</style>
+<style>
+/* #admin-layout{
   padding-left: calc(350px + 1%);
 }
 .v-sidebar-menu.collapsed ~ #admin-layout{
   padding-left: calc(50px + 1%);
+} */
+.v-tabs__item {
+  box-shadow: 0 4px 8px 0 rgba(82,97,115,0.18);
+  border-radius: 5px;
+}
+.v-tabs__item--active {
+  background-color: #fff;
 }
 
-.Audio.Guide{
-  background-color: #80DEEA !important;
-}
-.Audio.Enregistrement{
-  background-color: #0097A7 !important;
-}
-.Audio.Lecture{
-  background-color: #26C6DA !important;
-}
-.Audio.Coach{
-  background-color: #84FFFF !important;
-}
-.Video.Enregistrement{
-  background-color: #1976D2 !important;
-}
-.Video.Lecture{
-  background-color: #42A5F5 !important;
-}
-.Video.Coach{
-  background-color: #82B1FF !important;
-}
-.Texte.Liant{
-  background-color: #A1887F !important;
-}
-.Texte.Commentaire{
-  background-color: #8D6E63 !important;
-}
-.Texte.Exercice{
-  background-color: #6D4C41 !important;
-}
-.Texte.Notes{
-  background-color: #D7CCC8 !important;
-}
-.Photos.Exercice{
-  background-color: #FFD54F !important;
-}
-.Test.Questionnaire{
-  background-color: #AB47BC !important;
-}
 </style>

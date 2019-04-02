@@ -14,7 +14,8 @@ export default new Vuex.Store({
     user: null,
     isUserLoggedIn: false,
     isUserAdmin: false,
-    client: null
+    client: null,
+    secondLevel: null
   },
   mutations: {
     setToken (state, token) {
@@ -29,6 +30,9 @@ export default new Vuex.Store({
     },
     setAdmin (state, user) {
       state.isUserAdmin = !!(user)
+    },
+    setSL (state, secondLevel) {
+      state.secondLevel = secondLevel
     }
   },
   actions: {
@@ -43,6 +47,9 @@ export default new Vuex.Store({
     },
     setAdmin ({ commit }, user) {
       commit('setAdmin', user)
+    },
+    setSL ({ commit }, secondLevel) {
+      commit('setSL', secondLevel)
     }
   },
   getters: {
@@ -52,6 +59,9 @@ export default new Vuex.Store({
     },
     getClient: client => {
       return client
+    },
+    getSL: secondLevel => {
+      return secondLevel
     }
   }
 })

@@ -69,12 +69,12 @@
 export default {
   data () {
     return {
-      name: this.$store.state.user.name,
-      locale: 'fr',
-      locales: [
-        { locale: 'en', title: 'English', icon: '@/assets/images/flag_gb_24.png' },
-        { locale: 'fr', title: 'Français', icon: '@/assets/images/flag_fr_24.png' }
-      ]
+      name: this.$store.state.user.name
+      // locale: 'fr',
+      // locales: [
+      //   { locale: 'en', title: 'English', icon: '@/assets/images/flag_gb_24.png' },
+      //   { locale: 'fr', title: 'Français', icon: '@/assets/images/flag_fr_24.png' }
+      // ]
     }
   },
   methods: {
