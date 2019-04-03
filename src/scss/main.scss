@@ -2,12 +2,14 @@
 
 $primary: #198BFF;
 $secondary: #8CBCFF;
-$third: #EF853A;
+$third: #FCF8EE;
 $grey: #808187;
 
 
 // MIXINS
-
+.full-height {
+  height: 100vh;
+}
 .text-primary{
   color: $primary !important
 };
@@ -27,8 +29,14 @@ $grey: #808187;
 .bg-secondary{
   background-color: $secondary !important
 }
+.bg-third{
+  background-color: $third !important
+}
 .bg-white {
   background-color: white !important
+}
+.bg-grey {
+  background-color: $grey !important
 }
 .mx-25 {
   margin-left: 25%;
@@ -48,6 +56,9 @@ $grey: #808187;
 }
 .br-5 {
   border-radius: 25px;
+}
+.shadow-0 {
+  box-shadow: none;
 }
 .shadow-1 {
   box-shadow: 0 4px 8px 0 rgba(82,97,115,0.18);
@@ -83,4 +94,7 @@ $grey: #808187;
 
 h3{
   font-weight: normal;
+}
+.text-center {
+  text-align: center;
 }

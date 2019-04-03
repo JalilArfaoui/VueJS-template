@@ -1,10 +1,11 @@
 <template>
   <li class="mb-5">
     <h2 class="shadow-1 mx-25">{{ firstLevel.name }}</h2>
-    <v-layout row wrap>
+    <v-layout row wrap justify-center>
     <!-- <v-flex d-flex class="lvl3"> -->
       <v-flex
-        v-for="secondLevel in firstLevel.secondLevels"
+        v-for="(secondLevel,i) in firstLevel.secondLevels"
+        :key="i"
         @click="toExercices(secondLevel)"
         class="pointer"
         xs4
