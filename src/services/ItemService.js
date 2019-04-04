@@ -15,7 +15,7 @@ export default {
     return Api().put('editItem', credentials)
   },
   deleteItem (clientId) {
-    // this makes a put request to the register endpoint on the express server using the credentials passed
+    // this makes a delete request to the register endpoint on the express server using the credentials passed
     return Api().delete(clientId + '/item')
   }
 }

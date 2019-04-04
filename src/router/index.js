@@ -1,13 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import store from './../store/store.js'
+// import store from './../store/store.js'
 import NProgress from 'nprogress'
 
 import Home from '../components/Home'
 import Login from '../components/Login'
 import Welcome from '../components/Welcome.vue'
 import ResetPwd from '../components/ResetPwd.vue'
-import Dashboard from '../components/Dashboard.vue'
 import MediaCapture from '../components/MediaCapture.vue'
 import Exercises from '../components/Exercises.vue'
 
@@ -18,8 +17,9 @@ import AdminUsers from '../components/AdminUsers.vue'
 import AdminCoachs from '../components/AdminCoachs.vue'
 import Administration from '../components/Administration.vue'
 import AdminCourse from '../components/AdminCourse.vue'
-import NotFound from '../components/404.vue'
 import AdminMedias from '../components/AdminMedias.vue'
+
+import NotFound from '../components/404.vue'
 
 Vue.use(Router)
 
@@ -32,11 +32,6 @@ let router = new Router({
       name: 'home',
       component: Home
     },
-    // {
-    //   path: '/home',
-    //   name: 'home',
-    //   component: Home
-    // },
     {
       path: '/login',
       name: 'login',
@@ -58,14 +53,6 @@ let router = new Router({
       component: MediaCapture,
       meta: {
         requiresAuth: false
-      }
-    },
-    {
-      path: '/dashboard',
-      name: 'dashboard',
-      component: Dashboard,
-      meta: {
-        requiresAuth: true
       }
     },
     {
@@ -155,24 +142,26 @@ let router = new Router({
   ]
 })
 
-router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (store.state.isUserLoggedIn) {
-      next()
-      return
-    }
-    next({ path: '/login', query: { authRequired: true } })
-  } else if (to.matched.some(record => record.meta.requiresAdminAuth)) {
-    if (store.state.isUserLoggedIn && store.state.isUserAdmin) {
-      next()
-      return
-    }
-    next({ path: '/dashboard', query: { authAdminRequired: true } })
-  } else {
-    next()
-  }
-})
+// Before each route, check if user is Logged and/or is Admin
+// router.beforeEach((to, from, next) => {
+//   if (to.matched.some(record => record.meta.requiresAuth)) {
+//     if (store.state.isUserLoggedIn) {
+//       next()
+//       return
+//     }
+//     next({ path: '/login', query: { authRequired: true } })
+//   } else if (to.matched.some(record => record.meta.requiresAdminAuth)) {
+//     if (store.state.isUserLoggedIn && store.state.isUserAdmin) {
+//       next()
+//       return
+//     }
+//     next({ path: '/', query: { authAdminRequired: true } })
+//   } else {
+//     next()
+//   }
+// })
 
+// Launch a loading bar each time a route is called
 router.beforeResolve((to, from, next) => {
   // If this isn't an initial page load.
   if (to.name) {

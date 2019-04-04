@@ -3,12 +3,12 @@
     color="grey lighten-4"
     flat
   > -->
-    <v-toolbar color="purple accent-4" dark v-if="!adminPage">
+    <v-toolbar color="primary" dark v-if="!adminPage">
       <!-- <router-link to="./">
         TALK IT EASY
       </router-link> -->
       <v-btn @click="toHome" flat>
-        TALK IT EASY
+        SMART B
       </v-btn>
       <v-spacer></v-spacer>
 

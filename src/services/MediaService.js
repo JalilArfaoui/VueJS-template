@@ -11,7 +11,7 @@ export default {
     return Api().get('getMedias', credentials)
   },
   getMediaById (credentials) {
-    // this makes a get request to the register endpoint on the express server using the credentials passed
+    // this makes a put request to the register endpoint on the express server using the credentials passed
     return Api().put('getMediaById', credentials)
   },
   editMedia (credentials) {
@@ -19,7 +19,7 @@ export default {
     return Api().put('editMedia', credentials)
   },
   deleteMedia (mediaId) {
-    // this makes a put request to the register endpoint on the express server using the credentials passed
+    // this makes a delete request to the register endpoint on the express server using the credentials passed
     return Api().delete(mediaId + '/media')
   },
   mediaUpload (credentials) {

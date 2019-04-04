@@ -3,7 +3,7 @@
     <AdminNav />
     <v-layout id="admin-layout" justify-space-around column>
       <v-toolbar flat color="white">
-        <v-toolbar-title>TALKITEASY</v-toolbar-title>
+        <v-toolbar-title>SMART B</v-toolbar-title>
         <v-divider
           class="mx-2"
           inset
@@ -79,7 +79,8 @@ export default {
       name: this.$store.state.user.name,
       users: [],
       clients: [],
-      adminPage: true
+      adminPage: true,
+      error: ''
     }
   },
   computed: {

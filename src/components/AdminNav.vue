@@ -21,7 +21,7 @@ export default {
         // },
         {
           href: '/',
-          title: 'Talk It Easy',
+          title: 'SMART B',
           icon: 'fab fa-pied-piper-hat'
         },
         {

@@ -10,7 +10,7 @@ export default () => {
     headers: { 'x-auth': token }
   })
 
-  // before a request is made start the nprogress
+  // before a request is made, start the nprogress loading bar
   instance.interceptors.request.use(config => {
     NProgress.start()
     // NProgress.set(0.4) // To set a progress percentage, call .set(n), where n is a number between 0..1

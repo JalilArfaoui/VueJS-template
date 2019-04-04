@@ -25,9 +25,9 @@ Vue.use(Vuelidate)
 // Vue.use(VueSidebarMenu)
 Vue.use(Vuetify, {
   theme: {
-    primary: '#198BFF',
-    secondary: '#8CBCFF',
-    third: '#EF853A',
+    primary: '#1e3c4a',
+    secondary: '#6e9aac',
+    third: '#ffab40',
     accent: '#8c9eff',
     error: '#b71c1c'
   },
