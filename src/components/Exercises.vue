@@ -58,6 +58,7 @@ export default {
   },
   data () {
     return {
+      adminPage: '',
       // name: this.$store.state.user.name,
       name: '',
       secondLevel: this.$store.state.secondLevel,

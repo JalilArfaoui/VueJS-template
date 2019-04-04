@@ -85,6 +85,7 @@ export default {
   },
   data () {
     return {
+      adminPage: '',
       valid: false,
       name: '',
       email: this.$store.state.user,

@@ -31,7 +31,8 @@ export default {
       // name: this.$store.state.user.name,
       name: '',
       dialog: false,
-      error: ''
+      error: '',
+      adminPage: ''
     }
   },
   watch: {

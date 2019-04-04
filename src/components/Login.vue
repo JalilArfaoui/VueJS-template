@@ -137,6 +137,7 @@ export default {
   },
   data () {
     return {
+      adminPage: '',
       valid: false,
       email: '',
       password: '',
