@@ -69,7 +69,8 @@
 export default {
   data () {
     return {
-      name: this.$store.state.user.name
+      // name: this.$store.state.user.name,
+      name: ''
       // locale: 'fr',
       // locales: [
       //   { locale: 'en', title: 'English', icon: '@/assets/images/flag_gb_24.png' },

@@ -116,7 +116,8 @@ export default {
   },
   data () {
     return {
-      name: this.$store.state.user.name,
+      // name: this.$store.state.user.name,
+      name: '',
       dialog: false,
       error: '',
       dialogError: '',

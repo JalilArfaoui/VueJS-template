@@ -58,7 +58,8 @@ export default {
   },
   data () {
     return {
-      name: this.$store.state.user.name,
+      // name: this.$store.state.user.name,
+      name: '',
       secondLevel: this.$store.state.secondLevel,
       ex: 0,
       error: ''

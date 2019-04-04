@@ -133,7 +133,8 @@ export default {
   },
   data () {
     return {
-      name: this.$store.state.user.name,
+      // name: this.$store.state.user.name,
+      name: '',
       company: this.$store.state.client,
       dialog: false,
       error: '',
