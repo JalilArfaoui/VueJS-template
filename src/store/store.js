@@ -10,6 +10,9 @@ export default new Vuex.Store({
     createPersistedState()
   ],
   state: {
+    userName: null,
+    publicKey: null,
+    privateKey: null,
     token: null,
     user: null,
     isUserLoggedIn: false,
@@ -18,6 +21,15 @@ export default new Vuex.Store({
     secondLevel: null
   },
   mutations: {
+    setPublicKey (state, publicKey) {
+      state.publicKey = publicKey
+    },
+    setPrivateKey (state, privateKey) {
+      state.privakKey = privateKey
+    },
+    setUserName (state, userName) {
+      state.userName = userName
+    },
     setToken (state, token) {
       state.token = token
       state.isUserLoggedIn = !!(token)
@@ -36,6 +48,15 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    setPublicKey ({ commit }, publicKey) {
+      commit('setPublicKey', publicKey)
+    },
+    setPrivateKey ({ commit }, privateKey) {
+      commit('setPrivateKey', privateKey)
+    },
+    setUserName ({ commit }, userName) {
+      commit('setUserName', userName)
+    },
     setToken ({ commit }, token) {
       commit('setToken', token)
     },

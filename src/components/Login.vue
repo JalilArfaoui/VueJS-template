@@ -41,27 +41,27 @@
           v-on:keyup.enter="submit"
           >
             <v-text-field
-              label="Email"
-              type="email"
-              name="email"
-              v-model="email"
+              label="userName"
+              type="text"
+              name="userName"
+              v-model="userName"
               required
-              :rules="emailRules"
               autocomplete="false"
-              v-on:keyup.enter="isUser"
-              >
+              v-on:keyup.enter="fetchPublicKey"
+              :rules="userNameRules"
+            >
             </v-text-field>
             <br>
             <v-text-field
-              v-show="confirmedUser"
-              label="Mot de passe"
+              v-show="publicKey"
+              label="Clé privée"
               type="password"
-              name="password"
-              ref="password"
-              v-model="password"
+              name="privateKey"
+              ref="privateKey"
+              v-model="privateKey"
               required
-              :rules="passwordRules"
-              :counter="34"
+              :counter="256"
+              :rules="privateKeyRules"
               autofocus
               v-on:keyup.enter="login"
               >
@@ -96,7 +96,7 @@
           <v-btn
             v-show="!confirmedUser"
             dark
-            @click="isUser"
+            @click="fetchPublicKey"
             class="green">
             Démarrer
           </v-btn>
@@ -139,24 +139,26 @@ export default {
     return {
       adminPage: '',
       valid: false,
-      email: '',
       password: '',
       error: '',
-      emailRules: [
-        (v) => !!v || 'L\'adresse E-mail est nécessaire',
-        (v) => /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'L\'adresse E-mail doit être valide'
-      ],
-      passwordRules: [
-        (v) => !!v || 'Le mot de passe est nécessaire',
-        (v) => v && (v.length >= 8 || 'Le mot de passe doit contenir au minimum 8 charactères dont 1 chiffre')
-      ],
       authRequired: null,
       isUserLoggedIn: null,
       userEmail: null,
       confirmedUser: null,
       newUser: null,
       unknownUser: null,
-      reseting: false
+      reseting: false,
+      userName: '',
+      userNames: [],
+      userNameRules: [
+        (username) => username.length > 5 || 'sqdfqsfds  ',
+        (username) => this.userNames.includes(username) || "Utilisateur inconnu"
+      ],
+      privateKey: null,
+      publicKey: null,
+      privateKeyRules: [
+        (pk) => true // TODO encrypt with publicKey and decrypt with privateKey to verify
+      ]
     }
   },
   watch: {
@@ -164,9 +166,10 @@ export default {
     //   this.debouncedGetAnswer()
     // }
   },
-  created: function () {
+  created: async function () {
     this.email = this.$store.state.user
-    // this.debouncedGetAnswer = _.debounce(this.isUser, 20)
+    this.userNames = (await AuthenticationService.fetchUsers()).data;
+    // this.debouncedGetAnswer = _.debounce(this.fetchPublicKey, 20)
   },
   mounted () {
     if (this.$route.query.authRequired) {
@@ -179,30 +182,13 @@ export default {
     }
   },
   methods: {
-    async isUser () {
+    async fetchPublicKey () {
       try {
-        const schema = {
-          email: Joi.string().email({ minDomainAtoms: 2 })
-        }
-        const result = Joi.validate({ email: this.email }, schema)
-        if (result.error) {
-          // console.log('ERROR')
-        } else {
-          this.error = false
-          const state = await AuthenticationService.findByEmail({
-            email: this.email
-          })
-          if (state.data === 'Invité') {
-            this.newUser = true
-            this.confirmedUser = false
-            this.demarrer()
-          } else if (state.data === 'Activé') {
-            this.newUser = false
-            this.confirmedUser = true
-            this.$refs.password.$refs.input.focus()
-          }
-        }
+          const response = await AuthenticationService.fetchUser(this.userName);
+          // TODO error
+          this.publicKey = response.data.pub;
       } catch (e) {
+        // TODO
         this.error = e.response.data.error
       }
     },
@@ -211,21 +197,13 @@ export default {
         if (!this.$refs.form.validate()) {
           console.log('ERROR')
         } else {
-          const res = await AuthenticationService.login({
-            email: this.email,
-            password: this.password
-          })
-          // set token and user to true in the store
-          this.$store.dispatch('setToken', res.data.token)
-          this.$store.dispatch('setUser', res.data.user)
 
-          if (res.data.user.capacity === 'admin') {
-            // set admin to true in the store
-            this.$store.dispatch('setAdmin', res.data.user)
-              .then(() => this.$router.push('/admin'))
-          } else {
-            this.$router.push('/')
-          }
+          // set token and user to true in the store
+          this.$store.dispatch('setPublicKey', this.publicKey);
+          this.$store.dispatch('setPrivateKey', this.privateKey);
+          this.$store.dispatch('setUserName', this.userName);
+
+          this.$router.push('/sessions')
         }
       } catch (e) {
         this.error = e.response.data.error

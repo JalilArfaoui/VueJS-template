@@ -3,7 +3,7 @@
     color="grey lighten-4"
     flat
   > -->
-    <v-toolbar color="primary" dark v-if="!adminPage">
+    <v-toolbar color="primary" dark>
       <!-- <router-link to="./">
         TALK IT EASY
       </router-link> -->
