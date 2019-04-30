@@ -65,7 +65,7 @@
   <v-layout id="admin-layout">
     <v-flex xs4 md3 id="treeLevel">
       <v-toolbar color="white" >
-        <v-toolbar-title>{{this.course}}</v-toolbar-title>
+        <v-toolbar-title>Sessions</v-toolbar-title>
       </v-toolbar>
 
       <v-expansion-panel

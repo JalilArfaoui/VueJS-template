@@ -3,8 +3,9 @@ import Router from 'vue-router'
 // import store from './../store/store.js'
 import NProgress from 'nprogress'
 
-import Home from '../components/Home'
+// import Home from '../components/Home'
 import Login from '../components/Login'
+import Machines from '../components/Machines'
 import Welcome from '../components/Welcome.vue'
 import ResetPwd from '../components/ResetPwd.vue'
 import MediaCapture from '../components/MediaCapture.vue'
@@ -30,7 +31,12 @@ let router = new Router({
     {
       path: '/',
       name: 'home',
-      component: Home
+      redirect: '/machines'
+    },
+    {
+      path: '/machines',
+      name: 'machines',
+      component: Machines
     },
     {
       path: '/login',
